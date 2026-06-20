@@ -1,0 +1,13 @@
+{
+  "name": "eventpass-qr-platform",
+  "version": "1.0.0",
+  "description": "EventPass QR Ticketing Platform built with Stitch HTML templates and client-side database simulation.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

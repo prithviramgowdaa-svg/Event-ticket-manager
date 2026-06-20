@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="db.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-card {
+            background: rgba(26, 26, 28, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .crimson-glow {
+            box-shadow: 0px 8px 24px rgba(230, 57, 70, 0.3);
+        }
+        .crimson-gradient {
+            background: linear-gradient(135deg, #ff535b 0%, #bb152c 100%);
+        }
+        .perforated-edge {
+            mask-image: radial-gradient(circle at 0 50%, transparent 8px, black 8px), radial-gradient(circle at 100% 50%, transparent 8px, black 8px);
+            mask-position: -8px 0, calc(100% + 8px) 0;
+            mask-repeat: no-repeat;
+        }
+        body {
+            background-color: #0B0B0D;
+            color: #e1e3e4;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111415; }
+        ::-webkit-scrollbar-thumb { background: #323536; border-radius: 10px; }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#303032",
+                    "primary-fixed": "#ffdad8",
+                    "secondary-fixed": "#e4e2e4",
+                    "background": "#111415",
+                    "error-container": "#93000a",
+                    "surface-container-lowest": "#0c0f10",
+                    "primary-container": "#ff535b",
+                    "on-secondary-fixed": "#1b1b1d",
+                    "on-surface": "#e1e3e4",
+                    "tertiary-fixed-dim": "#c8c6c9",
+                    "inverse-on-surface": "#2e3132",
+                    "surface-variant": "#323536",
+                    "surface-container": "#1d2021",
+                    "secondary-container": "#474649",
+                    "on-primary-fixed": "#410007",
+                    "on-error": "#690005",
+                    "tertiary-fixed": "#e4e2e5",
+                    "tertiary-container": "#919094",
+                    "outline-variant": "#5b403f",
+                    "primary": "#ffb3b1",
+                    "surface-bright": "#373a3b",
+                    "secondary-fixed-dim": "#c8c6c8",
+                    "on-primary-container": "#5b000e",
+                    "inverse-primary": "#bb152c",
+                    "outline": "#ab8987",
+                    "on-background": "#e1e3e4",
+                    "surface-tint": "#ffb3b1",
+                    "on-tertiary-fixed": "#1b1b1e",
+                    "surface-dim": "#111415",
+                    "on-secondary-container": "#b7b4b7",
+                    "on-primary": "#680011",
+                    "on-tertiary": "#303033",
+                    "secondary": "#c8c6c8",
+                    "surface-container-highest": "#323536",
+                    "surface-container-high": "#282a2b",
+                    "inverse-surface": "#e1e3e4",
+                    "on-error-container": "#ffdad6",
+                    "primary-fixed-dim": "#ffb3b1",
+                    "on-tertiary-container": "#29292c",
+                    "surface": "#111415",
+                    "on-secondary-fixed-variant": "#474649",
+                    "error": "#ffb4ab",
+                    "surface-container-low": "#191c1d",
+                    "on-primary-fixed-variant": "#92001c",
+                    "on-tertiary-fixed-variant": "#47464a",
+                    "on-surface-variant": "#e4bebc",
+                    "tertiary": "#c8c6c9"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "md": "24px",
+                    "sm": "12px",
+                    "lg": "48px",
+                    "margin-desktop": "64px",
+                    "xs": "4px",
+                    "margin-mobile": "16px",
+                    "gutter": "24px",
+                    "xl": "80px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Geist"],
+                    "body-md": ["Inter"],
+                    "label-sm": ["Geist"],
+                    "display-lg": ["Geist"],
+                    "title-md": ["Geist"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                    "title-md": ["20px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-white/10 shadow-md shadow-primary/20">
+<nav class="flex justify-between items-center px-margin-desktop py-4 max-w-[1440px] mx-auto">
+<div class="flex items-center gap-md">
+<span class="font-display-lg text-display-lg tracking-tighter text-primary-container">VANTAGE</span>
+</div>
+<div class="hidden md:flex items-center gap-lg">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-body-md" href="/">Events</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 font-body-md" href="/admin">Admin Portal</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 font-body-md" href="/scanner">Staff Scanner</a>
+</div>
+<div class="flex items-center gap-base">
+<button onclick="scrollToSearch()" class="material-symbols-outlined p-base text-on-surface hover:text-primary transition-colors">search</button>
+<div id="auth-btn-container">
+<button onclick="openAuthModal()" class="bg-primary-container text-on-primary-container px-md py-sm rounded-full font-headline-lg text-label-sm uppercase tracking-wider active:scale-95 transition-transform">Sign In</button>
+</div>
+</div>
+</nav>
+</header>
+<main class="pt-24">
+<!-- Hero Section -->
+<section class="relative w-full h-[819px] min-h-[600px] overflow-hidden flex items-center px-margin-desktop">
+<!-- Hero Animation/Visual -->
+
+<div class="absolute inset-0 bg-gradient-to-r from-background via-background/40 to-transparent"></div>
+<div class="relative z-10 max-w-2xl space-y-md">
+<div class="inline-flex items-center gap-xs px-sm py-xs bg-primary/10 border border-primary/20 rounded-full text-primary font-label-sm uppercase tracking-widest">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">stars</span>
+                    Featured Event
+                </div>
+<h1 id="hero-title" class="font-display-lg text-[64px] md:text-[80px] leading-[0.9] text-on-surface">NEON <br/><span class="text-primary-container">ECLIPSE</span> 2024</h1>
+<p id="hero-desc" class="font-body-lg text-on-surface-variant max-w-lg">Experience the ultimate fusion of electronic soundscapes and high-tech visual installations in the heart of the city's abandoned cathedral.</p>
+<div class="flex items-center gap-md pt-base">
+<a href="/details?event=neon-eclipse" class="crimson-gradient crimson-glow px-xl py-md rounded-full font-headline-lg text-title-md text-white flex items-center gap-sm active:scale-95 transition-transform">
+                        Book Now
+                        <span class="material-symbols-outlined">arrow_forward</span>
+</a>
+<a href="/details?event=neon-eclipse" class="px-xl py-md border border-white/20 rounded-full font-headline-lg text-title-md text-on-surface hover:bg-white/5 transition-colors flex items-center justify-center">
+                        View Details
+                    </a>
+</div>
+</div>
+<!-- Side Floating Card -->
+<div class="hidden lg:block absolute right-margin-desktop top-1/2 -translate-y-1/2 w-80">
+<div class="glass-card p-md rounded-xl space-y-sm">
+<div class="aspect-square rounded-lg overflow-hidden relative">
+<img id="hero-side-image" class="w-full h-full object-cover" data-alt="A macro shot of a futuristic electronic concert stage with red laser beams cutting through a haze of smoke. The lighting is dramatic and cinematic, with a focus on deep blacks and vibrant crimson tones, capturing the intense energy of a live high-end performance in a modern, dark-mode visual style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSHwGo8C797_C_o_1mdVMCnLAINlYeiq9-oSO__eTUHD7vdnilzpvVLodlRBhpfrUh7kHpl7RmSit07SGEkCOFGWGt34TZ1DutXYsyK1AM34remj1uSgtr3QinAus98BO5wj-MhdjAKdj0QutJxmPnq0U7dqU-tggz3LnKYYqnPHMDfLxDgCCq4R3K0EQWgUWt2auEj-mManJkJQJyWqz0HkjguRBZkAHcWimQSCQrsC5wU0KjEHNtqPLZC0irA0KpWfpO2q5DpH_N"/>
+<div id="hero-side-price" class="absolute top-sm right-sm bg-background/60 backdrop-blur-md px-sm py-xs rounded-full text-primary font-label-sm">
+                            ₹4,999.00
+                        </div>
+</div>
+<div class="space-y-xs">
+<span id="hero-side-category" class="font-label-sm text-primary uppercase">Music / Electronic</span>
+<h3 id="hero-side-title" class="font-title-md text-on-surface">Mainstage Pass</h3>
+<div class="flex items-center gap-xs text-on-surface-variant font-label-sm">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+                            <span id="hero-side-location">The Void District</span>
+                        </div>
+<div id="hero-side-seats" class="text-emerald-400 font-label-sm text-xs mt-1 flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]">stadium</span>
+                            <span>5,000 seats left</span>
+                        </div>
+</div>
+</div>
+</div>
+</section>
+<!-- Search & Filters -->
+<section class="px-margin-desktop -mt-16 relative z-20">
+<div class="glass-card p-md rounded-2xl flex flex-col md:flex-row items-center gap-md shadow-2xl">
+<div class="flex-1 w-full relative group">
+<span class="absolute left-md top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">search</span>
+<input id="search-input" class="w-full bg-surface-container-highest border border-outline-variant focus:border-primary-container rounded-full py-md pl-xl pr-md text-on-surface focus:outline-none transition-all placeholder:text-outline-variant" placeholder="Search music, tech, conferences..." type="text" oninput="filterEvents()"/>
+</div>
+<div class="flex items-center gap-sm overflow-x-auto pb-sm md:pb-0 w-full md:w-auto">
+<button id="btn-filter-music" onclick="toggleCategoryFilter('music')" class="whitespace-nowrap px-md py-sm bg-surface-variant text-on-surface rounded-full font-label-sm flex items-center gap-xs hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-[18px]">graphic_eq</span>
+                        Music
+                    </button>
+<button id="btn-filter-tech" onclick="toggleCategoryFilter('tech')" class="whitespace-nowrap px-md py-sm bg-surface-variant text-on-surface rounded-full font-label-sm flex items-center gap-xs hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-[18px]">memory</span>
+                        Tech
+                    </button>
+<button id="btn-filter-conferences" onclick="toggleCategoryFilter('conferences')" class="whitespace-nowrap px-md py-sm bg-surface-variant text-on-surface rounded-full font-label-sm flex items-center gap-xs hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-[18px]">groups</span>
+                        Conferences
+                    </button>
+<button id="btn-filter-reset" onclick="resetFilters()" class="whitespace-nowrap px-md py-sm bg-surface-variant text-on-surface rounded-full font-label-sm flex items-center gap-xs hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+                        Reset
+                    </button>
+</div>
+</div>
+</section>
+<!-- Bento Grid Section -->
+<section class="px-margin-desktop py-xl space-y-lg">
+<div class="flex justify-between items-end">
+<div class="space-y-xs">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Upcoming Experiences</h2>
+<p class="text-on-surface-variant font-body-md">Hand-picked events for the discerning explorer.</p>
+</div>
+<a class="text-primary font-label-sm flex items-center gap-xs hover:gap-sm transition-all" href="#">
+                    VIEW ALL EVENTS
+                    <span class="material-symbols-outlined">chevron_right</span>
+</a>
+</div>
+<div id="bento-grid-wrapper" class="grid grid-cols-1 md:grid-cols-12 gap-md">
+<!-- Large Event Card -->
+<div id="bento-large-card" class="md:col-span-8 group relative overflow-hidden rounded-2xl aspect-[16/9] border border-white/10">
+<img id="bento-large-image" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A wide-angle landscape of a high-tech conference hall filled with rows of sleek, ergonomic chairs facing a massive holographic display. The room is bathed in a cool blue and dark gray palette, accented by subtle crimson glowing floor strips. The atmosphere is professional, exclusive, and technologically advanced, echoing a premium corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhIgSiexNqcVzIDixPBD9cOnB14hTLUoeW42k9tjzJYxxxqtVGtxWsuv2QnjhoWeeu1zlJxwW5P7gBK52vfHbI8XfgUw0jklNwSvfKZ84stktcUFBsrAj1A3FLy4U9Kk5ruyYJm4r5Cj47n5alW5VxjSjFo8JlQHRCtcwNskW-wA_0sy4HUA8O-5BEnvs_I9sXLTqlwDKiShm76lpvZ0r-kQ-uoAshQyGjK3ZBfmE3exHXuf1eYYVQTnhylp2dsTVwtYqW5rfEjo9w"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-lg w-full flex justify-between items-end">
+<div class="space-y-xs">
+<div class="flex flex-wrap items-center gap-xs mb-xs">
+<span id="bento-large-category" class="bg-primary-container/20 text-primary border border-primary/30 px-sm py-xs rounded-full font-label-sm uppercase backdrop-blur-md">Tech Conference</span>
+<span id="bento-large-seats" class="bg-emerald-400/10 text-emerald-400 border border-emerald-400/20 px-sm py-xs rounded-full font-label-sm uppercase backdrop-blur-md inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">stadium</span> <span>3,000 seats left</span></span>
+</div>
+<h3 id="bento-large-title" class="font-display-lg text-headline-lg text-white">Silicon Horizon 2024</h3>
+<p id="bento-large-desc" class="text-on-surface-variant max-w-sm">Global summit on generative AI and neural interfaces.</p>
+</div>
+<a href="/details?event=silicon-horizon" class="bg-white text-background px-lg py-md rounded-full font-headline-lg text-label-sm active:scale-95 transition-transform flex items-center justify-center">Book Now</a>
+</div>
+</div>
+<!-- Secondary Cards -->
+<div id="bento-sec-wrapper" class="md:col-span-4 flex flex-col gap-md">
+<!-- Card 1 -->
+<div id="bento-sec1-card" class="flex-1 glass-card p-md rounded-2xl group flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div class="w-16 h-16 rounded-xl overflow-hidden">
+<img id="bento-sec1-image" class="w-full h-full object-cover" data-alt="A vibrant, close-up shot of a music festival crowd with silhouettes of hands raised against a sunset sky. The lighting is warm and energetic, with deep oranges and dark silhouettes creating a high-contrast, atmospheric scene. The style is premium and editorial, reflecting the excitement of a high-end live event." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCb2-UhvYiBuW2ukvjuSPFwjymY8lGGjKJKRg1Td1-Ub6oTlndvA7F3CFVGRhcG8p5TLJ-vFEpCsIWV7uDoZZrJH2Sgwz_-hM8MjPTwgytvAbDQUx9RmRU3A6Gpgd-vLtgx3mrRTN6-1JHenLZr40P_rlsM75MGVKq-eIanDyN8kLI_CBtj62VVBPiv0K-P9EDA6pKwe-V_H-_-Bo7CIaQY-rA0N8PQgwkLVf04QleTgv4WAjkclXniitOJaXDOlDPbACYHQh2mpBb-"/>
+</div>
+<span class="material-symbols-outlined text-primary-container">confirmation_number</span>
+</div>
+<div class="space-y-xs pt-md">
+<h4 id="bento-sec1-title" class="font-title-md text-on-surface">Echoes in the Rain</h4>
+<p id="bento-sec1-subtitle" class="text-label-sm text-on-surface-variant uppercase tracking-widest">Ambient Festival / Oct 12</p>
+<div id="bento-sec1-seats" class="text-emerald-400 font-label-sm text-[12px] uppercase tracking-widest mt-1 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">stadium</span> <span>150 seats left</span></div>
+<a href="/details?event=echoes-in-rain" class="w-full mt-sm py-sm border border-outline rounded-full text-on-surface hover:bg-white/5 transition-colors font-label-sm block text-center">Book Ticket</a>
+</div>
+</div>
+<!-- Secondary Cards - Card 2 -->
+<div id="bento-sec2-card" class="flex-1 glass-card p-md rounded-2xl group flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div class="w-16 h-16 rounded-xl overflow-hidden">
+<img id="bento-sec2-image" class="w-full h-full object-cover" data-alt="A minimalist architectural shot of a sleek gallery space with clean lines and sharp corners. The lighting is high-contrast, with a focus on dramatic shadows and bright focal points. The scene uses a palette of charcoal gray and stark white, with a single crimson accent from an exit sign, embodying a secure and professional environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzhL3N7COnZFnVD10E5UasCcJ9MBcc9CSjnHEJAm3r9ZiPFIDRa4a0rrg3nPXVpwJUyg-9izo-6Dk903HqzKcCvEf8IpiZ4PkZuQS0-lXHgqWMdYkT2kMCOW9cp3CAvlPP9yhommAFdpOivwu5vdefq2rLybjtJBmpfGSKs2aFV-YiGQ0O-plPTbUoP9KeiEOlZfCHG28PHlmZG5RtsYR2dEUpipQr4mYgzecj6KaCLQkAaPKnZt-JfgLSvLmnxAAKe0l-F_Jiy6F5"/>
+</div>
+<span class="material-symbols-outlined text-primary-container">palette</span>
+</div>
+<div class="space-y-xs pt-md">
+<h4 id="bento-sec2-title" class="font-title-md text-on-surface">Digital Canvas Expo</h4>
+<p id="bento-sec2-subtitle" class="text-label-sm text-on-surface-variant uppercase tracking-widest">Art &amp; Tech / Nov 05</p>
+<div id="bento-sec2-seats" class="text-emerald-400 font-label-sm text-[12px] uppercase tracking-widest mt-1 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">stadium</span> <span>60 seats left</span></div>
+<a href="/details?event=digital-canvas" class="w-full mt-sm py-sm border border-outline rounded-full text-on-surface hover:bg-white/5 transition-colors font-label-sm block text-center">Book Ticket</a>
+</div>
+</div>
+</div>
+<!-- Three smaller cards -->
+<div id="bento-sm1-card" class="md:col-span-4 glass-card p-md rounded-2xl space-y-md">
+<img id="bento-sm1-image" class="w-full h-40 object-cover rounded-xl" data-alt="A dark and moody nightclub interior with neon crimson lighting strips and a sleek DJ booth. The atmosphere is exclusive and high-end, with a focus on reflections on polished dark surfaces. The visual style is modern corporate mixed with underground excitement, utilizing a deep dark mode palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_f3QWQ3WS5azNwGLEu_eSfc5ffK6h-mcEXflqmQsY8enzFHTXyCHy34EpvNVJGa_LiJ6tJ8q4s8joDQvoUkLJiiN8qJaoUU8KwndXbs53vu7fqazjT-sku6bvxaalAZeh9B4PQyMs9ryrGPHJFqOaJ2HY4Y6IP3zeK1_MoUrdZoBhV4mOrb2yrJqRVruUz5-snbK9L2vk6YOrIS9VTYrkWR0d9_GmTKpRiOhOSeEvPzQUwQUKKuPeFcnrMRK8EqbvsXCA0fvCldXy"/>
+<div class="space-y-sm">
+<div class="flex justify-between items-center">
+<h4 id="bento-sm1-title" class="font-title-md">Midnight Pulse</h4>
+<span id="bento-sm1-price" class="text-primary font-bold">₹3,500</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant text-label-sm">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+<span id="bento-sm1-schedule">22:00 - Late</span>
+</div>
+<div id="bento-sm1-seats" class="flex items-center gap-xs text-emerald-400 font-bold">
+<span class="material-symbols-outlined text-[18px]">stadium</span>
+<span>40 seats left</span>
+</div>
+</div>
+<a href="/details?event=midnight-pulse" class="w-full crimson-gradient py-sm rounded-full text-white font-label-sm hover:opacity-90 transition-opacity block text-center">Book Now</a>
+</div>
+</div>
+<div id="bento-sm2-card" class="md:col-span-4 glass-card p-md rounded-2xl space-y-md">
+<img id="bento-sm2-image" class="w-full h-40 object-cover rounded-xl" data-alt="A bright, high-key workshop space with modern glass tables and high-tech tablets. The lighting is clean and professional, creating an atmosphere of focus and innovation. The color scheme is dominated by cool grays and whites, with subtle red brand accents on the screens, tailored for a professional tech audience." src="https://lh3.googleusercontent.com/aida-public/AB6AXuADPr0evSJHNJtjGnUQ14IPjozGbQSwpwT9hjOzcPCEYeH106eznPbHBj_c8TXwBhWOOuv3lbSC5MwevQ8sXE_pyAoZ6yBjhdZb8ZsqFIceU7fha2KptRWTtlggoT38VRvpcj9Clb7jK8b3dOXGNF5LmyAJkPrsBg2PgFrvfmTuAmtk7odz_heuf4ajeSkDJjrc01Q7mwmn9409PqVF2L_9vRwqVnB7r9By800wuAbKwNrTs3oSSrJVgQiblk_S_96aAPOsqHTUCIZU"/>
+<div class="space-y-sm">
+<div class="flex justify-between items-center">
+<h4 id="bento-sm2-title" class="font-title-md">Code &amp; Craft</h4>
+<span id="bento-sm2-price" class="text-primary font-bold">₹7,500</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant text-label-sm">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span id="bento-sm2-location">Tech Hub Alpha</span>
+</div>
+<div id="bento-sm2-seats" class="flex items-center gap-xs text-emerald-400 font-bold">
+<span class="material-symbols-outlined text-[18px]">stadium</span>
+<span>15 seats left</span>
+</div>
+</div>
+<a href="/details?event=code-craft" class="w-full crimson-gradient py-sm rounded-full text-white font-label-sm hover:opacity-90 transition-opacity block text-center">Book Now</a>
+</div>
+</div>
+<div id="bento-sm3-card" class="md:col-span-4 glass-card p-md rounded-2xl space-y-md">
+<img id="bento-sm3-image" class="w-full h-40 object-cover rounded-xl" data-alt="A sophisticated gala dinner setup in a luxury ballroom with warm, ambient lighting from crystal chandeliers. The table settings are impeccable, featuring deep-toned linens and silver cutlery. The mood is one of anticipation and exclusivity, using a refined color palette of black, silver, and deep red." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyPynP-hZZ3LiT6tgMGnhbxKCTde1-Dbmcg0mtbo5lGwm4NrKl8s_Qnkki2gihQu5C2wCdGwTyJiIH7alt4YbR1qvVWwataNKUvIDdZUC0jKiUAsh4M38POWAAOtcZTHjCWhLdQ5OwiqzbkHkLdvzUeJO3k7NODW5595Khr3oO_pMvU-fApdTguKgqQNk_6r1C9lopq5asOIvgk8lS89Pmog5c1c9zzAA7sEeqxfaApRW4Q27-SIdE0xN9jYyKL_YM-7unVaPLmQZk"/>
+<div class="space-y-sm">
+<div class="flex justify-between items-center">
+<h4 id="bento-sm3-title" class="font-title-md">Elite Gala Night</h4>
+<span id="bento-sm3-price" class="text-primary font-bold">₹15,000</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant text-label-sm">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span id="bento-sm3-type">Black Tie Event</span>
+</div>
+<div id="bento-sm3-seats" class="flex items-center gap-xs text-emerald-400 font-bold">
+<span class="material-symbols-outlined text-[18px]">stadium</span>
+<span>20 seats left</span>
+</div>
+</div>
+<a href="/details?event=elite-gala" class="w-full crimson-gradient py-sm rounded-full text-white font-label-sm hover:opacity-90 transition-opacity block text-center">Book Now</a>
+</div>
+</div>
+</div>
+<div id="filtered-grid-wrapper" class="hidden grid grid-cols-1 md:grid-cols-3 gap-md"></div>
+<div id="search-empty-state" class="hidden text-center py-xl space-y-sm">
+  <span class="material-symbols-outlined text-[64px] text-outline-variant">search_off</span>
+  <h3 class="font-title-md text-white font-bold">No Events Found</h3>
+  <p class="text-on-surface-variant text-sm">We couldn't find any events matching your search criteria.</p>
+</div>
+</section>
+<!-- Dynamic Experience Section -->
+<section class="py-xl relative">
+<div class="absolute inset-0 overflow-hidden -z-10">
+<div class="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full"></div>
+<div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary-container/5 blur-[100px] rounded-full"></div>
+</div>
+<div class="px-margin-desktop grid grid-cols-1 lg:grid-cols-2 gap-xl items-center">
+<div class="space-y-md">
+<h2 class="font-display-lg text-[48px] text-on-surface">Secure Your Access to the <span class="text-primary">Next Generation</span> of Events</h2>
+<p class="font-body-lg text-on-surface-variant">Our proprietary ticketing system uses quantum-secured blockchain protocols to ensure your purchase is unique, immutable, and instantly transferable. Experience peace of mind with Vantage.</p>
+<div class="grid grid-cols-2 gap-md pt-base">
+<div class="space-y-xs">
+<h4 class="font-headline-lg text-primary">99.9%</h4>
+<p class="text-label-sm text-on-surface-variant uppercase">Uptime Reliability</p>
+</div>
+<div class="space-y-xs">
+<h4 class="font-headline-lg text-primary">0%</h4>
+<p class="text-label-sm text-on-surface-variant uppercase">Bot Transaction rate</p>
+</div>
+</div>
+</div>
+<div class="relative">
+<!-- Ticket Card Design -->
+<div id="home-ticket-card" class="perforated-edge bg-surface-container-high p-lg rounded-2xl shadow-2xl space-y-md border border-white/5 relative">
+<div class="flex justify-between items-start">
+<div class="font-display-lg text-headline-lg tracking-tighter text-primary">VANTAGE</div>
+<div class="text-right">
+<p class="text-label-sm text-on-surface-variant uppercase">Ticket No.</p>
+<p id="home-ticket-id" class="font-headline-lg text-title-md">#VN-8921-X</p>
+</div>
+</div>
+<div class="pt-md border-t border-dashed border-outline-variant">
+<p class="text-label-sm text-on-surface-variant uppercase mb-xs">Event</p>
+<h3 id="home-ticket-title" class="font-headline-lg text-headline-lg truncate">CYBERPUNK VOL. 4</h3>
+</div>
+<div class="flex justify-between">
+<div>
+<p class="text-label-sm text-on-surface-variant uppercase">Row</p>
+<p id="home-ticket-tier" class="font-title-md">VIP</p>
+</div>
+<div>
+<p class="text-label-sm text-on-surface-variant uppercase">Seat</p>
+<p id="home-ticket-qty" class="font-title-md">G-12</p>
+</div>
+<div>
+<p class="text-label-sm text-on-surface-variant uppercase">Gate</p>
+<p id="home-ticket-gate" class="font-title-md">South-A</p>
+</div>
+</div>
+<div class="bg-white p-sm rounded-lg w-fit mx-auto mt-md flex flex-col items-center justify-center">
+<img id="home-ticket-qr" class="w-32 h-32" src="" alt="QR Code" style="display:none;" />
+<div id="home-ticket-qr-placeholder" class="w-32 h-32 bg-background flex items-center justify-center">
+<span class="material-symbols-outlined text-[100px] text-white">qr_code_2</span>
+</div>
+</div>
+<div id="home-ticket-download-container" class="hidden mt-md">
+<button onclick="downloadHomeTicketPDF()" class="w-full py-2 bg-primary/20 hover:bg-primary/30 border border-primary/40 text-primary hover:text-white rounded-full font-bold text-label-sm transition-all active:scale-95 flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">download</span> Download PDF
+</button>
+</div>
+</div>
+<!-- No Active Ticket State -->
+<div id="home-no-ticket-state" class="glass-card p-lg rounded-2xl border border-outline-variant/30 text-center flex flex-col items-center justify-center min-h-[300px] space-y-sm hidden">
+<span class="material-symbols-outlined text-[64px] text-outline-variant">confirmation_number</span>
+<h3 class="font-title-md text-white font-bold">No Active Tickets</h3>
+<p class="text-on-surface-variant text-sm max-w-xs">You don't have any tickets yet. Explore our featured experiences and book your access!</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest w-full py-lg border-t border-outline-variant mt-xl">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop space-y-md md:space-y-0">
+<div class="flex flex-col items-center md:items-start gap-xs">
+<span class="font-headline-lg text-headline-lg text-on-surface">VANTAGE</span>
+<p class="text-on-surface-variant font-label-sm">© 2024 VANTAGE TICKETING. ALL RIGHTS RESERVED.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-md">
+<a class="text-on-surface-variant font-label-sm hover:text-on-surface transition-colors font-bold text-primary" href="/admin">Admin Portal</a>
+<a class="text-on-surface-variant font-label-sm hover:text-on-surface transition-colors font-bold text-primary" href="/scanner">Staff Scanner</a>
+<a class="text-on-surface-variant font-label-sm hover:text-on-surface transition-colors" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant font-label-sm hover:text-on-surface transition-colors" href="#">Terms of Service</a>
+</div>
+<div class="flex gap-md">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">public</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">share</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">campaign</button>
+</div>
+</div>
+</footer>
+
+<!-- Authentication Modal -->
+<div id="auth-modal" class="fixed inset-0 z-[100] flex items-center justify-center px-4 hidden">
+    <div class="absolute inset-0 bg-background/80 backdrop-blur-md" onclick="closeAuthModal()"></div>
+    <div class="glass-card w-full max-w-md p-lg rounded-2xl flex flex-col shadow-2xl relative border-primary-container/20">
+        <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-on-surface-variant hover:text-white flex items-center justify-center">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <h3 class="font-headline-lg text-headline-lg mb-xs text-white text-center">VANTAGE Account</h3>
+        <p class="text-on-surface-variant font-body-md mb-lg text-center text-sm">Please sign in to unlock exclusive experiences and tickets.</p>
+        
+        <div class="space-y-sm">
+            <!-- Google Login Button -->
+            <button onclick="loginWithGoogle()" class="w-full bg-white hover:bg-neutral-100 text-neutral-800 font-semibold py-3 px-4 rounded-full flex items-center justify-center gap-xs active:scale-[0.98] transition-all border border-neutral-300">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" width="20px" height="20px">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                <span class="font-body-md text-sm">Continue with Google</span>
+            </button>
+            
+            <div class="flex items-center my-md">
+                <div class="flex-grow h-px bg-outline-variant/30"></div>
+                <span class="px-3 text-xs text-on-surface-variant font-medium">OR</span>
+                <div class="flex-grow h-px bg-outline-variant/30"></div>
+            </div>
+
+            <!-- Simple Email Form -->
+            <form id="auth-email-form" onsubmit="loginWithEmail(event)" class="space-y-sm text-left">
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-[10px] text-on-surface-variant" for="auth-email">EMAIL ADDRESS</label>
+                    <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-2 font-body-md text-on-surface text-sm focus:outline-none focus:border-primary-container" id="auth-email" placeholder="you@example.com" required type="email"/>
+                </div>
+                <button type="submit" class="w-full crimson-gradient hover:scale-[1.02] text-white font-bold py-3 rounded-full crimson-glow transition-all uppercase tracking-wider text-label-sm mt-base">
+                    Sign In with Email
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Custom Google Login Input -->
+<div id="google-custom-modal" class="fixed inset-0 z-[120] flex items-center justify-center px-4 hidden">
+    <div class="absolute inset-0 bg-background/90 backdrop-blur-sm" onclick="closeGoogleCustomModal()"></div>
+    <div class="glass-card w-full max-w-sm p-lg rounded-2xl flex flex-col shadow-2xl relative border-primary-container/20">
+        <button onclick="closeGoogleCustomModal()" class="absolute top-4 right-4 text-on-surface-variant hover:text-white flex items-center justify-center">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <div class="flex flex-col items-center mb-md">
+            <h4 class="font-headline-lg text-title-md text-white font-bold">Google Sign In</h4>
+            <p class="text-xs text-on-surface-variant">Enter your Google email address</p>
+        </div>
+        
+        <form id="google-custom-form" onsubmit="submitGoogleCustom(event)" class="space-y-sm text-left">
+            <div class="flex flex-col gap-xs">
+                <label class="font-label-sm text-[10px] text-on-surface-variant" for="google-gmail">GMAIL ADDRESS</label>
+                <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-2 font-body-md text-on-surface text-sm focus:outline-none focus:border-primary-container" id="google-gmail" placeholder="name@gmail.com" required type="email" pattern="[a-zA-Z0-9._%+-]+@gmail\\.com$" title="Must be a valid @gmail.com address"/>
+            </div>
+            <div class="flex flex-col gap-xs">
+                <label class="font-label-sm text-[10px] text-on-surface-variant" for="google-name">FULL NAME</label>
+                <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-2 font-body-md text-on-surface text-sm focus:outline-none focus:border-primary-container" id="google-name" placeholder="John Doe" required type="text"/>
+            </div>
+            <button type="submit" class="w-full bg-white hover:bg-neutral-100 text-neutral-800 font-bold py-3 rounded-full transition-all text-label-sm mt-base">
+                Next
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Official Google Identity SDK Modal -->
+<div id="google-sdk-modal" class="fixed inset-0 z-[110] flex items-center justify-center px-4 hidden">
+    <div class="absolute inset-0 bg-background/90 backdrop-blur-sm" onclick="closeGoogleSdkModal()"></div>
+    <div class="glass-card w-full max-w-sm p-lg rounded-2xl flex flex-col shadow-2xl relative border-primary-container/20">
+        <button onclick="closeGoogleSdkModal()" class="absolute top-4 right-4 text-on-surface-variant hover:text-white flex items-center justify-center">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <div class="flex flex-col items-center mb-md">
+            <h4 class="font-headline-lg text-title-md text-white font-bold mb-xs">Google Authentication</h4>
+            <p class="text-xs text-on-surface-variant text-center leading-relaxed">Sign in securely using your Google account from this device.</p>
+        </div>
+        <!-- Google button placeholder -->
+        <div class="flex justify-center w-full py-base">
+            <div id="google-sdk-button"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+        // Micro-interactions for hovering cards
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px)';
+                card.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0px)';
+            });
+        });
+
+        // Simple parallax for hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('webgl-shader');
+            if (hero) {
+                hero.style.transform = `translateY(${scrolled * 0.3}px)`;
+            }
+        });
+
+        // Search & Category Filter Logic
+        let selectedCategory = '';
+
+        window.toggleCategoryFilter = function(category) {
+            if (selectedCategory === category) {
+                selectedCategory = '';
+            } else {
+                selectedCategory = category;
+            }
+            
+            // Update UI styles for filter buttons
+            const categories = ['music', 'tech', 'conferences'];
+            categories.forEach(cat => {
+                const btn = document.getElementById(`btn-filter-${cat}`);
+                if (!btn) return;
+                
+                if (cat === selectedCategory) {
+                    btn.classList.remove('bg-surface-variant', 'text-on-surface', 'hover:bg-surface-container-highest', 'transition-colors');
+                    btn.classList.add('bg-primary-container', 'text-on-primary-container', 'font-bold');
+                } else {
+                    btn.classList.add('bg-surface-variant', 'text-on-surface', 'hover:bg-surface-container-highest', 'transition-colors');
+                    btn.classList.remove('bg-primary-container', 'text-on-primary-container', 'font-bold');
+                }
+            });
+            
+            filterEvents();
+        };
+
+        window.resetFilters = function() {
+            selectedCategory = '';
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) searchInput.value = '';
+            
+            const categories = ['music', 'tech', 'conferences'];
+            categories.forEach(cat => {
+                const btn = document.getElementById(`btn-filter-${cat}`);
+                if (btn) {
+                    btn.classList.add('bg-surface-variant', 'text-on-surface', 'hover:bg-surface-container-highest', 'transition-colors');
+                    btn.classList.remove('bg-primary-container', 'text-on-primary-container', 'font-bold');
+                }
+            });
+            
+            filterEvents();
+        };
+
+        window.scrollToSearch = function() {
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => searchInput.focus(), 600);
+            }
+        };
+
+        window.filterEvents = async function() {
+            const searchInput = document.getElementById('search-input');
+            const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            
+            const bentoWrapper = document.getElementById('bento-grid-wrapper');
+            const filteredWrapper = document.getElementById('filtered-grid-wrapper');
+            const emptyState = document.getElementById('search-empty-state');
+            
+            // If nothing is selected or typed, show the original Bento Grid
+            if (!query && !selectedCategory) {
+                if (bentoWrapper) bentoWrapper.classList.remove('hidden');
+                if (filteredWrapper) {
+                    filteredWrapper.classList.add('hidden');
+                    filteredWrapper.innerHTML = '';
+                }
+                if (emptyState) emptyState.classList.add('hidden');
+                return;
+            }
+            
+            // Otherwise, filter dynamically
+            const events = await VantageDB.getEvents();
+            const filtered = Object.values(events).filter(event => {
+                // Exclude featured event from bento grids if it's already featured at the top
+                const featuredId = Object.values(events).find(e => e.is_featured)?.id || 'neon-eclipse';
+                if (event.id === featuredId) return false;
+                
+                const matchesQuery = !query || 
+                    event.title.toLowerCase().includes(query) || 
+                    event.category.toLowerCase().includes(query) || 
+                    event.location.toLowerCase().includes(query);
+                    
+                let matchesCategory = true;
+                if (selectedCategory) {
+                    const catLower = event.category.toLowerCase();
+                    if (selectedCategory === 'music') {
+                        matchesCategory = catLower.includes('music') || catLower.includes('festival');
+                    } else if (selectedCategory === 'tech') {
+                        matchesCategory = catLower.includes('tech') || catLower.includes('art');
+                    } else if (selectedCategory === 'conferences') {
+                        matchesCategory = catLower.includes('conference') || catLower.includes('gala');
+                    }
+                }
+                
+                return matchesQuery && matchesCategory;
+            });
+            
+            if (bentoWrapper) bentoWrapper.classList.add('hidden');
+            if (filteredWrapper) {
+                filteredWrapper.classList.remove('hidden');
+                filteredWrapper.innerHTML = '';
+                
+                if (filtered.length === 0) {
+                    if (emptyState) emptyState.classList.remove('hidden');
+                } else {
+                    if (emptyState) emptyState.classList.add('hidden');
+                    
+                    filtered.forEach(event => {
+                        const card = document.createElement('div');
+                        card.className = 'glass-card p-md rounded-2xl flex flex-col justify-between hover:translate-y-[-4px] transition-all duration-300';
+                        
+                        // Formatting price display
+                        let priceDisplay = 'TBD';
+                        if (event.tiers && event.tiers.length > 0) {
+                            const minPrice = Math.min(...event.tiers.map(t => t.price));
+                            priceDisplay = `₹${minPrice.toLocaleString()}`;
+                        }
+
+                        card.innerHTML = `
+                            <div class="space-y-md">
+                                <div class="aspect-video rounded-xl overflow-hidden relative">
+                                    <img src="${event.image}" class="w-full h-full object-cover" alt="${event.title}" />
+                                    <div class="absolute top-sm right-sm bg-background/60 backdrop-blur-md px-sm py-xs rounded-full text-primary font-label-sm">
+                                        ${priceDisplay}
+                                    </div>
+                                </div>
+                                <div class="space-y-xs">
+                                    <span class="font-label-sm text-primary uppercase">${event.category}</span>
+                                    <h3 class="font-title-md text-on-surface font-bold">${event.title}</h3>
+                                    <div class="flex items-center gap-xs text-on-surface-variant font-label-sm">
+                                        <span class="material-symbols-outlined text-[16px]">location_on</span>
+                                        <span>${event.location}</span>
+                                    </div>
+                                    <div class="flex items-center gap-xs text-on-surface-variant font-label-sm">
+                                        <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                                        <span>${event.date}</span>
+                                    </div>
+                                    <div class="flex items-center gap-xs text-emerald-400 font-label-sm">
+                                        <span class="material-symbols-outlined text-[16px]">stadium</span>
+                                        <span>${event.capacity.toLocaleString()} seats left</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="/details?event=${event.id}" class="w-full mt-md py-sm border border-outline rounded-full text-on-surface hover:bg-white/5 transition-colors font-label-sm block text-center">
+                                Book Ticket
+                            </a>
+                        `;
+
+                        filteredWrapper.appendChild(card);
+                        
+                        card.addEventListener('mouseenter', () => {
+                            card.style.transform = 'translateY(-4px)';
+                            card.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+                        });
+                        card.addEventListener('mouseleave', () => {
+                            card.style.transform = 'translateY(0px)';
+                        });
+                    });
+                }
+            }
+        };
+
+        // Customer Authentication Functions
+        window.openAuthModal = function() {
+            document.getElementById('auth-modal').classList.remove('hidden');
+        };
+
+        window.closeAuthModal = function() {
+            document.getElementById('auth-modal').classList.add('hidden');
+        };
+
+        window.loginWithGoogle = function() {
+            const clientId = localStorage.getItem('vantage_google_client_id');
+            if (clientId && clientId.trim() !== "") {
+                document.getElementById('auth-modal').classList.add('hidden');
+                document.getElementById('google-sdk-modal').classList.remove('hidden');
+                initializeGoogleSignInSDK();
+            } else {
+                document.getElementById('auth-modal').classList.add('hidden');
+                document.getElementById('google-custom-modal').classList.remove('hidden');
+            }
+        };
+
+        window.closeGoogleSdkModal = function() {
+            document.getElementById('google-sdk-modal').classList.add('hidden');
+        };
+
+        function decodeJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                console.error("JWT decoding failed:", e);
+                return null;
+            }
+        }
+
+        window.handleCredentialResponse = function(response) {
+            const payload = decodeJwt(response.credential);
+            if (payload) {
+                const user = {
+                    name: payload.name,
+                    email: payload.email,
+                    avatar: payload.picture
+                };
+                VantageDB.loginUser(user);
+                closeGoogleSdkModal();
+                alert(`Welcome, ${user.name}! Authenticated via Google.`);
+            }
+        };
+
+        function initializeGoogleSignInSDK() {
+            const clientId = localStorage.getItem('vantage_google_client_id');
+            if (window.google && window.google.accounts) {
+                google.accounts.id.initialize({
+                    client_id: clientId,
+                    callback: handleCredentialResponse
+                });
+                
+                google.accounts.id.renderButton(
+                    document.getElementById("google-sdk-button"),
+                    { 
+                        theme: "filled_blue", 
+                        size: "large", 
+                        shape: "pill",
+                        width: "280"
+                    }
+                );
+            }
+        }
+
+        window.closeGoogleSelectModal = function() {
+            document.getElementById('google-select-modal').classList.add('hidden');
+        };
+
+        window.selectGoogleAccount = function(name, email, avatar) {
+            const user = { name, email, avatar };
+            VantageDB.loginUser(user);
+            closeGoogleSelectModal();
+            alert(`Welcome, ${name}! Logged in via Google.`);
+        };
+
+        window.showGoogleCustomLogin = function() {
+            document.getElementById('google-select-modal').classList.add('hidden');
+            document.getElementById('google-custom-modal').classList.remove('hidden');
+        };
+
+        window.closeGoogleCustomModal = function() {
+            document.getElementById('google-custom-modal').classList.add('hidden');
+        };
+
+        window.submitGoogleCustom = function(e) {
+            e.preventDefault();
+            const email = document.getElementById('google-gmail').value;
+            const name = document.getElementById('google-name').value;
+            const avatar = `https://www.gravatar.com/avatar/${btoa(email)}?d=identicon`;
+            
+            const user = { name, email, avatar };
+            VantageDB.loginUser(user);
+            
+            document.getElementById('google-custom-modal').classList.add('hidden');
+            alert(`Welcome, ${name}! Logged in via Google.`);
+        };
+
+        window.loginWithEmail = function(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const name = email.split('@')[0];
+            const avatar = `https://www.gravatar.com/avatar/${btoa(email)}?d=identicon`;
+            
+            const user = { name, email, avatar };
+            VantageDB.loginUser(user);
+            
+            closeAuthModal();
+            alert(`Signed in as ${email}.`);
+        };
+
+        window.logoutCustomer = function() {
+            if (confirm("Are you sure you want to logout?")) {
+                VantageDB.logoutUser();
+                alert("Logged out successfully.");
+            }
+        };
+
+        function updateAuthUI() {
+            const user = VantageDB.getCurrentUser();
+            const authBtnContainer = document.getElementById('auth-btn-container');
+            if (!authBtnContainer) return;
+            
+            if (user) {
+                authBtnContainer.innerHTML = `
+                    <div class="flex items-center gap-sm">
+                        <div class="flex items-center gap-xs bg-surface-container-high px-4 py-2 rounded-full border border-outline-variant/30">
+                            <img src="${user.avatar || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'}" class="w-6 h-6 rounded-full border border-primary-container/50" alt="${user.name}" />
+                            <span class="font-body-md text-xs font-semibold text-white max-w-[100px] truncate hidden sm:inline">${user.name.split(' ')[0]}</span>
+                        </div>
+                        <button onclick="logoutCustomer()" class="text-on-surface-variant hover:text-primary font-label-sm text-[11px] uppercase tracking-wider transition-colors ml-2">Logout</button>
+                    </div>
+                `;
+            } else {
+                authBtnContainer.innerHTML = `
+                    <button onclick="openAuthModal()" class="bg-primary-container text-on-primary-container px-md py-sm rounded-full font-headline-lg text-label-sm uppercase tracking-wider active:scale-95 transition-transform">Sign In</button>
+                `;
+            }
+        }
+
+        async function renderEventPortal() {
+            const events = await VantageDB.getEvents();
+            const allEvents = Object.values(events);
+
+            // Featured event: find one marked is_featured, fallback to neon-eclipse
+            const featured = allEvents.find(e => e.is_featured) || events['neon-eclipse'];
+            if (featured) {
+                const titleEl = document.getElementById('hero-title');
+                if (titleEl) {
+                    if (featured.title === "NEON ECLIPSE 2024") {
+                        titleEl.innerHTML = 'NEON <br/><span class="text-primary-container">ECLIPSE</span> 2024';
+                    } else {
+                        titleEl.innerText = featured.title;
+                    }
+                }
+                
+                const descEl = document.getElementById('hero-desc');
+                if (descEl) {
+                    descEl.innerText = featured.description || `Experience the ultimate fusion of electronic soundscapes and high-tech experiences at ${featured.title}. This immersive event transforms the venue into a multidimensional sensory arena.`;
+                }
+
+                const sideImg = document.getElementById('hero-side-image');
+                if (sideImg) sideImg.src = featured.image;
+                
+                const sidePrice = document.getElementById('hero-side-price');
+                if (sidePrice && featured.tiers && featured.tiers.length > 0) {
+                    sidePrice.innerText = `₹${featured.tiers[0].price.toLocaleString()}`;
+                }
+                
+                const sideCategory = document.getElementById('hero-side-category');
+                if (sideCategory) sideCategory.innerText = featured.category;
+                
+                const sideTitle = document.getElementById('hero-side-title');
+                if (sideTitle && featured.tiers && featured.tiers.length > 0) {
+                    sideTitle.innerText = featured.tiers[0].name;
+                }
+                
+                const sideLocation = document.getElementById('hero-side-location');
+                if (sideLocation) sideLocation.innerText = featured.location;
+
+                const sideSeats = document.querySelector('#hero-side-seats span:last-child');
+                if (sideSeats) {
+                    sideSeats.innerText = `${featured.capacity.toLocaleString()} seats left`;
+                }
+
+                const heroBookBtn = document.querySelector('a[href*="details?event="]');
+                if (heroBookBtn) {
+                    heroBookBtn.setAttribute('href', `/details?event=${featured.id}`);
+                }
+            }
+
+            // Large card: silicon-horizon
+            const large = events['silicon-horizon'];
+            if (large) {
+                document.getElementById('bento-large-card')?.classList.remove('hidden');
+                const img = document.getElementById('bento-large-image');
+                if (img) img.src = large.image;
+                const cat = document.getElementById('bento-large-category');
+                if (cat) cat.innerText = large.category;
+                const title = document.getElementById('bento-large-title');
+                if (title) title.innerText = large.title;
+                const desc = document.getElementById('bento-large-desc');
+                if (desc) desc.innerText = large.description || `Global summit on generative AI and neural interfaces at ${large.location}.`;
+                const seats = document.querySelector('#bento-large-seats span:last-child');
+                if (seats) seats.innerText = `${large.capacity.toLocaleString()} seats left`;
+            } else {
+                document.getElementById('bento-large-card')?.classList.add('hidden');
+            }
+
+            // Card 1: echoes-in-rain
+            const sec1 = events['echoes-in-rain'];
+            if (sec1) {
+                document.getElementById('bento-sec1-card')?.classList.remove('hidden');
+                const img = document.getElementById('bento-sec1-image');
+                if (img) img.src = sec1.image;
+                const title = document.getElementById('bento-sec1-title');
+                if (title) title.innerText = sec1.title;
+                const sub = document.getElementById('bento-sec1-subtitle');
+                if (sub) sub.innerText = `${sec1.category} / ${sec1.date.split(',')[0]}`;
+                const seats = document.querySelector('#bento-sec1-seats span:last-child');
+                if (seats) seats.innerText = `${sec1.capacity.toLocaleString()} seats left`;
+            } else {
+                document.getElementById('bento-sec1-card')?.classList.add('hidden');
+            }
+
+            // Card 2: digital-canvas
+            const sec2 = events['digital-canvas'];
+            if (sec2) {
+                document.getElementById('bento-sec2-card')?.classList.remove('hidden');
+                const img = document.getElementById('bento-sec2-image');
+                if (img) img.src = sec2.image;
+                const title = document.getElementById('bento-sec2-title');
+                if (title) title.innerText = sec2.title;
+                const sub = document.getElementById('bento-sec2-subtitle');
+                if (sub) sub.innerText = `${sec2.category} / ${sec2.date.split(',')[0]}`;
+                const seats = document.querySelector('#bento-sec2-seats span:last-child');
+                if (seats) seats.innerText = `${sec2.capacity.toLocaleString()} seats left`;
+            } else {
+                document.getElementById('bento-sec2-card')?.classList.add('hidden');
+            }
+
+            // Hide secondary wrapper if both sec1 & sec2 are hidden
+            if (!sec1 && !sec2) {
+                document.getElementById('bento-sec-wrapper')?.classList.add('hidden');
+            } else {
+                document.getElementById('bento-sec-wrapper')?.classList.remove('hidden');
+            }
+
+            // Small 1: midnight-pulse
+            const sm1 = events['midnight-pulse'];
+            if (sm1) {
+                document.getElementById('bento-sm1-card')?.classList.remove('hidden');
+                const img = document.getElementById('bento-sm1-image');
+                if (img) img.src = sm1.image;
+                const title = document.getElementById('bento-sm1-title');
+                if (title) title.innerText = sm1.title;
+                const price = document.getElementById('bento-sm1-price');
+                if (price && sm1.tiers && sm1.tiers.length > 0) price.innerText = `₹${sm1.tiers[0].price.toLocaleString()}`;
+                const sched = document.getElementById('bento-sm1-schedule');
+                if (sched) sched.innerText = sm1.doors ? `${sm1.doors} - Late` : "22:00 - Late";
+                const seats = document.querySelector('#bento-sm1-seats span:last-child');
+                if (seats) seats.innerText = `${sm1.capacity.toLocaleString()} seats left`;
+            } else {
+                document.getElementById('bento-sm1-card')?.classList.add('hidden');
+            }
+
+            // Small 2: code-craft
+            const sm2 = events['code-craft'];
+            if (sm2) {
+                document.getElementById('bento-sm2-card')?.classList.remove('hidden');
+                const img = document.getElementById('bento-sm2-image');
+                if (img) img.src = sm2.image;
+                const title = document.getElementById('bento-sm2-title');
+                if (title) title.innerText = sm2.title;
+                const price = document.getElementById('bento-sm2-price');
+                if (price && sm2.tiers && sm2.tiers.length > 0) price.innerText = `₹${sm2.tiers[0].price.toLocaleString()}`;
+                const loc = document.getElementById('bento-sm2-location');
+                if (loc) loc.innerText = sm2.location.split(',')[0];
+                const seats = document.querySelector('#bento-sm2-seats span:last-child');
+                if (seats) seats.innerText = `${sm2.capacity.toLocaleString()} seats left`;
+            } else {
+                document.getElementById('bento-sm2-card')?.classList.add('hidden');
+            }
+
+            // Small 3: elite-gala
+            const sm3 = events['elite-gala'];
+            if (sm3) {
+                document.getElementById('bento-sm3-card')?.classList.remove('hidden');
+                const img = document.getElementById('bento-sm3-image');
+                if (img) img.src = sm3.image;
+                const title = document.getElementById('bento-sm3-title');
+                if (title) title.innerText = sm3.title;
+                const price = document.getElementById('bento-sm3-price');
+                if (price && sm3.tiers && sm3.tiers.length > 0) price.innerText = `₹${sm3.tiers[0].price.toLocaleString()}`;
+                const type = document.getElementById('bento-sm3-type');
+                if (type) type.innerText = sm3.category;
+                const seats = document.querySelector('#bento-sm3-seats span:last-child');
+                if (seats) seats.innerText = `${sm3.capacity.toLocaleString()} seats left`;
+            } else {
+                document.getElementById('bento-sm3-card')?.classList.add('hidden');
+            }
+        }
+
+        async function renderLastTicket() {
+            const user = VantageDB.getCurrentUser();
+            const tickets = await VantageDB.getPurchasedTickets();
+            
+            let userTicket = null;
+            if (user) {
+                userTicket = tickets.find(t => t.attendeeEmail === user.email);
+            }
+
+            const ticketIdEl = document.getElementById('home-ticket-id');
+            const ticketTitleEl = document.getElementById('home-ticket-title');
+            const ticketTierEl = document.getElementById('home-ticket-tier');
+            const ticketQtyEl = document.getElementById('home-ticket-qty');
+            const ticketGateEl = document.getElementById('home-ticket-gate');
+            const ticketQrEl = document.getElementById('home-ticket-qr');
+            const ticketQrPlaceholder = document.getElementById('home-ticket-qr-placeholder');
+            const downloadContainer = document.getElementById('home-ticket-download-container');
+            const noTicketState = document.getElementById('home-no-ticket-state');
+            const ticketCard = document.getElementById('home-ticket-card');
+
+            if (userTicket) {
+                if (ticketCard) ticketCard.classList.remove('hidden');
+                if (noTicketState) noTicketState.classList.add('hidden');
+                if (ticketIdEl) ticketIdEl.innerText = `#${userTicket.id}`;
+                if (ticketTitleEl) ticketTitleEl.innerText = userTicket.eventName.toUpperCase();
+                if (ticketTierEl) ticketTierEl.innerText = userTicket.tierName.split(' ')[0];
+                if (ticketQtyEl) ticketQtyEl.innerText = userTicket.quantity;
+                if (ticketGateEl) ticketGateEl.innerText = userTicket.scanGate || "Gate 4";
+                
+                if (ticketQrEl && ticketQrPlaceholder) {
+                    ticketQrEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${userTicket.id}`;
+                    ticketQrEl.style.display = 'block';
+                    ticketQrPlaceholder.style.display = 'none';
+                }
+                
+                if (downloadContainer) {
+                    downloadContainer.classList.remove('hidden');
+                }
+            } else {
+                if (ticketCard) ticketCard.classList.add('hidden');
+                if (noTicketState) noTicketState.classList.remove('hidden');
+            }
+        }
+
+        window.downloadHomeTicketPDF = function() {
+            const element = document.getElementById('home-ticket-card');
+            if (!element) return;
+            
+            const downloadBtn = document.getElementById('home-ticket-download-container');
+            if (downloadBtn) downloadBtn.style.display = 'none';
+
+            const ticketIdVal = document.getElementById('home-ticket-id').innerText.replace('#', '');
+            const opt = {
+                margin:       0.2,
+                filename:     `Vantage_Ticket_${ticketIdVal}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#1d2224' },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                if (downloadBtn) downloadBtn.style.display = 'block';
+            }).catch(err => {
+                console.error("PDF generation failed:", err);
+                if (downloadBtn) downloadBtn.style.display = 'block';
+            });
+        };
+
+        // Setup real-time listener
+        function setupRealtime() {
+            const client = VantageDB.getSupabaseClient();
+            client
+                .channel('schema-db-changes')
+                .on(
+                    'postgres_changes',
+                    { event: '*', schema: 'public', table: 'events' },
+                    async payload => {
+                        console.log('Event changed in realtime:', payload);
+                        await renderEventPortal();
+                        await filterEvents();
+                    }
+                )
+                .on(
+                    'postgres_changes',
+                    { event: '*', schema: 'public', table: 'tickets' },
+                    async payload => {
+                        console.log('Ticket changed in realtime:', payload);
+                        await renderEventPortal();
+                        await filterEvents();
+                        await renderLastTicket();
+                    }
+                )
+                .subscribe();
+        }
+
+        window.addEventListener('storage', async () => {
+            updateAuthUI();
+            await renderEventPortal();
+            await filterEvents();
+            await renderLastTicket();
+        });
+
+        // Initialize UI & Event Portal data
+        (async () => {
+            updateAuthUI();
+            await renderEventPortal();
+            await renderLastTicket();
+            setupRealtime();
+        })();
+    </script>
+</body></html>

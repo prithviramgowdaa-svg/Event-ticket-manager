@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VANTAGE Scanner Portal</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="db.js"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/html5-qrcode"></script>
+<style>
+        #reader video {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scanner-viewfinder {
+            position: relative;
+            overflow: hidden;
+        }
+        .scanner-viewfinder::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #ff535b;
+            box-shadow: 0 0 15px #ff535b;
+            animation: scan 3s ease-in-out infinite;
+            z-index: 10;
+        }
+        @keyframes scan {
+            0%, 100% { top: 10%; }
+            50% { top: 90%; }
+        }
+        .glass-card {
+            background: rgba(26, 26, 28, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .crimson-glow {
+            box-shadow: 0px 8px 24px rgba(230, 57, 70, 0.3);
+        }
+        @keyframes pulse-status {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .status-overlay {
+            animation: pulse-status 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary": "#303032",
+                      "primary-fixed": "#ffdad8",
+                      "secondary-fixed": "#e4e2e4",
+                      "background": "#111415",
+                      "error-container": "#93000a",
+                      "surface-container-lowest": "#0c0f10",
+                      "primary-container": "#ff535b",
+                      "on-secondary-fixed": "#1b1b1d",
+                      "on-surface": "#e1e3e4",
+                      "tertiary-fixed-dim": "#c8c6c9",
+                      "inverse-on-surface": "#2e3132",
+                      "surface-variant": "#323536",
+                      "surface-container": "#1d2021",
+                      "secondary-container": "#474649",
+                      "on-primary-fixed": "#410007",
+                      "on-error": "#690005",
+                      "tertiary-fixed": "#e4e2e5",
+                      "tertiary-container": "#919094",
+                      "outline-variant": "#5b403f",
+                      "primary": "#ffb3b1",
+                      "surface-bright": "#373a3b",
+                      "secondary-fixed-dim": "#c8c6c8",
+                      "on-primary-container": "#5b000e",
+                      "inverse-primary": "#bb152c",
+                      "outline": "#ab8987",
+                      "on-background": "#e1e3e4",
+                      "surface-tint": "#ffb3b1",
+                      "on-tertiary-fixed": "#1b1b1e",
+                      "surface-dim": "#111415",
+                      "on-secondary-container": "#b7b4b7",
+                      "on-primary": "#680011",
+                      "on-tertiary": "#303033",
+                      "secondary": "#c8c6c8",
+                      "surface-container-highest": "#323536",
+                      "surface-container-high": "#282a2b",
+                      "inverse-surface": "#e1e3e4",
+                      "on-error-container": "#ffdad6",
+                      "primary-fixed-dim": "#ffb3b1",
+                      "on-tertiary-container": "#29292c",
+                      "surface": "#111415",
+                      "on-secondary-fixed-variant": "#474649",
+                      "error": "#ffb4ab",
+                      "surface-container-low": "#191c1d",
+                      "on-primary-fixed-variant": "#92001c",
+                      "on-tertiary-fixed-variant": "#47464a",
+                      "on-surface-variant": "#e4bebc",
+                      "tertiary": "#c8c6c9"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base": "8px",
+                      "md": "24px",
+                      "sm": "12px",
+                      "lg": "48px",
+                      "margin-desktop": "64px",
+                      "xs": "4px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px",
+                      "xl": "80px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["Geist"],
+                      "headline-lg": ["Geist"],
+                      "body-md": ["Inter"],
+                      "label-sm": ["Geist"],
+                      "display-lg": ["Geist"],
+                      "title-md": ["Geist"],
+                      "body-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                      "title-md": ["20px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background selection:bg-primary-container selection:text-on-primary-container min-h-screen overflow-hidden flex flex-col">
+<div id="scanner-login-screen" class="min-h-screen flex items-center justify-center bg-[#0B0B0D] px-4 w-full h-full z-[100] absolute inset-0 hidden">
+    <div class="w-full max-w-md p-lg glass-card rounded-2xl space-y-md text-center border border-outline-variant/30 crimson-glow">
+        <h1 class="font-display-lg text-[40px] text-primary tracking-tighter mb-xs">VANTAGE</h1>
+        <p class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-widest mb-md">Staff Portal Security Gate</p>
+        
+        <form id="scanner-login-form" class="space-y-sm text-left">
+            <div class="flex flex-col gap-xs">
+                <label class="font-label-sm text-label-sm text-on-surface-variant" for="scanner-password">PASSWORD</label>
+                <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="scanner-password" type="password" placeholder="••••••••" required />
+            </div>
+            <p id="scanner-error-msg" class="text-error font-body-md text-sm hidden">Access Denied: Invalid Credentials</p>
+            <button type="submit" class="w-full crimson-gradient hover:scale-[1.02] text-white font-bold py-3 rounded-full crimson-glow transition-all uppercase tracking-wider text-label-sm mt-base">
+                Authenticate
+            </button>
+        </form>
+        
+        <div class="pt-base border-t border-outline-variant/20 flex justify-center">
+            <a href="/" class="text-on-surface-variant hover:text-white font-label-sm text-[11px] uppercase tracking-wider transition-colors flex items-center gap-xs">
+                <span class="material-symbols-outlined text-[14px]">arrow_back</span> Back to Main Site
+            </a>
+        </div>
+    </div>
+</div>
+
+<div id="scanner-portal-content" class="hidden flex flex-col h-screen w-full">
+<!-- Top Admin Header -->
+<header class="bg-surface-container-low px-margin-mobile py-sm border-b border-outline-variant flex items-center justify-between z-40">
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-primary" data-icon="qr_code_scanner">qr_code_scanner</span>
+<div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tighter">VANTAGE</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Staff Portal</p>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Gate 4 • Admin</span>
+<span class="font-title-md text-title-md text-primary" id="attendance-count">1,248 / 5,000</span>
+</div>
+<button onclick="logoutScanner()" class="text-on-surface-variant hover:text-red-400 transition-colors flex items-center justify-center p-2 rounded-full hover:bg-white/5 ml-1" title="Logout Staff Portal">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+</button>
+</div>
+</header>
+<!-- Main Content: Scanner Viewport -->
+<main class="flex-grow relative flex flex-col overflow-hidden">
+<!-- Live Viewfinder -->
+<div class="flex-grow scanner-viewfinder bg-black relative">
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<!-- Scan Frame -->
+<div class="w-64 h-64 border-2 border-primary/40 rounded-xl relative">
+<div class="absolute -top-1 -left-1 w-8 h-8 border-t-4 border-l-4 border-primary rounded-tl-lg"></div>
+<div class="absolute -top-1 -right-1 w-8 h-8 border-t-4 border-r-4 border-primary rounded-tr-lg"></div>
+<div class="absolute -bottom-1 -left-1 w-8 h-8 border-b-4 border-l-4 border-primary rounded-bl-lg"></div>
+<div class="absolute -bottom-1 -right-1 w-8 h-8 border-b-4 border-r-4 border-primary rounded-br-lg"></div>
+</div>
+</div>
+<!-- Real Camera Stream Viewport -->
+<div class="absolute inset-0 z-0">
+<div id="reader" class="w-full h-full"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background/30 pointer-events-none"></div>
+</div>
+<!-- Interaction Layer -->
+<div class="absolute inset-x-0 bottom-0 p-margin-mobile z-20">
+<div class="glass-card rounded-xl p-md flex flex-col gap-md">
+<div class="flex flex-col gap-xs">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="ticket-id">MANUAL ENTRY</label>
+<div class="relative">
+<input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-body-md focus:ring-2 focus:ring-primary focus:outline-none placeholder:text-on-surface-variant/50 transition-all" id="ticket-id" placeholder="Enter Ticket ID..." type="text"/>
+<button class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-primary hover:text-primary-container transition-colors" onclick="simulateScan('success')">
+<span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<div class="flex gap-sm">
+<button class="flex-1 bg-surface-container-high py-sm rounded-lg flex items-center justify-center gap-xs font-label-sm text-label-sm active:scale-95 transition-transform" onclick="toggleFlash()">
+<span class="material-symbols-outlined text-[18px]" data-icon="flashlight_on" id="flash-icon">flashlight_on</span>
+                            FLASH
+                        </button>
+<button class="flex-1 bg-surface-container-high py-sm rounded-lg flex items-center justify-center gap-xs font-label-sm text-label-sm active:scale-95 transition-transform" onclick="showHistory()">
+<span class="material-symbols-outlined text-[18px]" data-icon="history">history</span>
+                            HISTORY
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- FAB Scanner Trigger -->
+<button class="absolute right-margin-mobile bottom-margin-mobile mb-[180px] w-16 h-16 rounded-full bg-gradient-to-br from-primary-container to-inverse-primary crimson-glow flex items-center justify-center z-30 active:scale-90 transition-transform" onclick="triggerScanner()">
+<span class="material-symbols-outlined text-on-primary-container scale-125" data-icon="barcode_scanner" data-weight="fill" style="font-variation-settings: 'FILL' 1;">barcode_scanner</span>
+</button>
+</main>
+<!-- Navigation (Shared Component Style Mapping) -->
+<nav class="bg-surface-container-low border-t border-outline-variant flex justify-center py-sm px-xs z-40">
+<button onclick="location.href='/scanner'" class="flex flex-col items-center gap-1 text-primary bg-primary-container/20 rounded-lg p-2 px-6">
+<span class="material-symbols-outlined text-primary" data-icon="qr_code_scanner">qr_code_scanner</span>
+<span class="font-label-sm text-[10px] text-primary">SCANNER</span>
+</button>
+</nav>
+<!-- Success Status Overlay (Hidden by Default) -->
+<div class="fixed inset-0 z-[100] flex items-center justify-center px-lg hidden" id="success-overlay">
+<div class="absolute inset-0 bg-background/80 backdrop-blur-sm"></div>
+<div class="status-overlay glass-card w-full max-w-sm p-lg rounded-2xl flex flex-col items-center text-center shadow-2xl relative">
+<div class="w-20 h-20 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-md">
+<span class="material-symbols-outlined text-emerald-400 text-5xl" data-icon="check_circle">check_circle</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-xs">Ticket Verified</h2>
+<p class="font-body-md text-on-surface-variant mb-lg">Access Granted: VIP SECTION A</p>
+<div class="w-full bg-surface-container-highest rounded-xl p-md flex flex-col items-start gap-xs text-left mb-lg">
+<p class="font-label-sm text-on-surface-variant">HOLDER</p>
+<p class="font-title-md text-primary">Alexander Vanguard</p>
+<div class="w-full h-px bg-outline-variant my-xs"></div>
+<div class="flex justify-between w-full">
+<div>
+<p class="font-label-sm text-on-surface-variant">TYPE</p>
+<p class="font-body-md">All-Access Pass</p>
+</div>
+<div class="text-right">
+<p class="font-label-sm text-on-surface-variant">ID</p>
+<p class="font-body-md">#VT-99210</p>
+</div>
+</div>
+</div>
+<button class="w-full py-md rounded-full bg-primary-container text-on-primary-container font-headline-lg-mobile crimson-glow active:scale-95 transition-all" onclick="hideOverlay('success-overlay')">
+                NEXT SCAN
+            </button>
+</div>
+</div>
+<!-- Error Status Overlay (Hidden by Default) -->
+<div class="fixed inset-0 z-[100] flex items-center justify-center px-lg hidden" id="error-overlay">
+<div class="absolute inset-0 bg-error-container/60 backdrop-blur-md"></div>
+<div class="status-overlay glass-card w-full max-w-sm p-lg rounded-2xl flex flex-col items-center text-center shadow-2xl relative border-error/50">
+<div class="w-20 h-20 rounded-full bg-error/10 border border-error/30 flex items-center justify-center mb-md">
+<span class="material-symbols-outlined text-error text-5xl" data-icon="error">error</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-error mb-xs">Invalid Ticket</h2>
+<p class="font-body-md text-on-surface-variant mb-lg">This ticket has already been scanned or is void.</p>
+<div class="w-full border-2 border-error/20 rounded-xl p-md mb-lg">
+<p class="font-body-md text-error">CODE: TKT_ALREADY_USED</p>
+<p class="font-label-sm text-on-surface-variant mt-1">First Scanned: 20:14:02 at Gate 2</p>
+</div>
+<button class="w-full py-md rounded-full bg-error text-on-error font-headline-lg-mobile active:scale-95 transition-all" onclick="hideOverlay('error-overlay')">
+                TRY AGAIN
+            </button>
+</div>
+</div>
+<!-- History Status Overlay (Hidden by Default) -->
+<div class="fixed inset-0 z-[100] flex items-end justify-center px-0 hidden" id="history-overlay">
+    <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" onclick="hideOverlay('history-overlay')"></div>
+    <div class="status-overlay glass-card w-full max-w-md p-lg rounded-t-2xl flex flex-col shadow-2xl relative max-h-[80vh] border-t border-outline-variant/30 z-50">
+        <button onclick="hideOverlay('history-overlay')" class="absolute top-4 right-4 text-on-surface-variant hover:text-white flex items-center justify-center">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <h2 class="font-headline-lg text-headline-lg text-on-surface mb-xs flex items-center gap-xs justify-center">
+            <span class="material-symbols-outlined text-primary">history</span> Scan History
+        </h2>
+        <p class="font-body-md text-on-surface-variant mb-md text-center">Recent scan logs for Gate 4.</p>
+        
+        <div id="history-list" class="w-full flex-grow overflow-y-auto scrollbar-hide space-y-3 pr-1 min-h-[300px] max-h-[50vh]">
+            <!-- Dynamic history logs go here -->
+        </div>
+        
+        <button class="w-full py-md mt-md rounded-full bg-surface-container-high text-white font-headline-lg-mobile active:scale-95 transition-all" onclick="hideOverlay('history-overlay')">
+            CLOSE HISTORY
+        </button>
+    </div>
+</div>
+</div>
+<script>
+        async function updateAttendance() {
+            const tickets = await VantageDB.getPurchasedTickets();
+            const scannedCount = tickets.filter(t => t.status === 'scanned').length;
+            const totalCount = tickets.length;
+            document.getElementById('attendance-count').innerText = `${scannedCount.toLocaleString()} / ${totalCount.toLocaleString()}`;
+        }
+
+        let html5QrCode = null;
+        let isScanning = false;
+
+        function startCameraScanner() {
+            if (isScanning) return;
+            
+            html5QrCode = new Html5Qrcode("reader");
+            
+            const config = {
+                fps: 10,
+                qrbox: (width, height) => {
+                    const minEdge = Math.min(width, height);
+                    const qrboxSize = Math.max(200, Math.floor(minEdge * 0.65));
+                    return { width: qrboxSize, height: qrboxSize };
+                }
+            };
+            
+            const qrCodeSuccessCallback = (decodedText) => {
+                if (document.getElementById('success-overlay').classList.contains('flex') || 
+                    document.getElementById('error-overlay').classList.contains('flex') ||
+                    document.getElementById('history-overlay').classList.contains('flex')) {
+                    return;
+                }
+                performScan(decodedText);
+            };
+            
+            html5QrCode.start(
+                { facingMode: "environment" },
+                config,
+                qrCodeSuccessCallback
+            ).then(() => {
+                isScanning = true;
+                console.log("Real QR camera scanning active.");
+            }).catch(err => {
+                console.warn("Camera scan initiation failed, falling back to mock scanner:", err);
+            });
+        }
+
+        function stopCameraScanner() {
+            if (html5QrCode && isScanning) {
+                html5QrCode.stop().then(() => {
+                    isScanning = false;
+                    console.log("Scanner stopped.");
+                }).catch(err => {
+                    console.error("Failed to stop scanner:", err);
+                });
+            }
+        }
+
+        function toggleFlash() {
+            const icon = document.getElementById('flash-icon');
+            const isOff = icon.textContent === 'flashlight_on';
+            
+            if (html5QrCode && isScanning) {
+                try {
+                    const track = html5QrCode.getActiveTrack();
+                    if (track && typeof track.getCapabilities === 'function') {
+                        const capabilities = track.getCapabilities();
+                        if (capabilities.torch) {
+                            track.applyConstraints({
+                                advanced: [{ torch: isOff }]
+                            }).then(() => {
+                                icon.textContent = isOff ? 'flashlight_off' : 'flashlight_on';
+                                icon.classList.toggle('text-primary');
+                            }).catch(err => {
+                                console.warn("Failed to apply torch constraint:", err);
+                            });
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Flashlight capabilities check failed:", e);
+                }
+            }
+            
+            icon.textContent = isOff ? 'flashlight_off' : 'flashlight_on';
+            icon.classList.toggle('text-primary');
+        }
+
+        async function triggerScanner() {
+            const tickets = await VantageDB.getPurchasedTickets();
+            const validTickets = tickets.filter(t => t.status === 'valid');
+            
+            const viewfinder = document.querySelector('.scanner-viewfinder');
+            viewfinder.style.opacity = '0.5';
+            
+            setTimeout(() => {
+                viewfinder.style.opacity = '1';
+                
+                let targetId = '';
+                if (validTickets.length > 0) {
+                    const randTicket = validTickets[Math.floor(Math.random() * validTickets.length)];
+                    targetId = randTicket.id;
+                } else if (tickets.length > 0) {
+                    const randTicket = tickets[Math.floor(Math.random() * tickets.length)];
+                    targetId = randTicket.id;
+                } else {
+                    targetId = 'VT-99999';
+                }
+                
+                performScan(targetId);
+            }, 500);
+        }
+
+        async function performScan(ticketId) {
+            if (!ticketId) return;
+            
+            const result = await VantageDB.verifyTicket(ticketId, "Gate 4 - Staff Portal");
+            
+            if (result.success) {
+                const ticket = result.ticket;
+                document.querySelector('#success-overlay h2').innerText = "Ticket Verified";
+                document.querySelector('#success-overlay p.mb-lg').innerText = `Access Granted: ${ticket.tierName.toUpperCase()}`;
+                document.querySelector('#success-overlay p.text-primary').innerText = ticket.attendeeName;
+                document.querySelector('#success-overlay .flex.justify-between div:nth-child(1) p.font-body-md').innerText = ticket.eventName;
+                document.querySelector('#success-overlay .flex.justify-between div:nth-child(2) p.font-body-md').innerText = `#${ticket.id}`;
+                
+                document.getElementById('success-overlay').classList.remove('hidden');
+                document.getElementById('success-overlay').classList.add('flex');
+            } else {
+                if (result.code === 'TKT_ALREADY_USED') {
+                    const ticket = result.ticket;
+                    const scanTime = new Date(ticket.scanTime).toLocaleTimeString();
+                    document.querySelector('#error-overlay h2').innerText = "Invalid Ticket";
+                    document.querySelector('#error-overlay p.mb-lg').innerText = "This ticket has already been scanned.";
+                    document.querySelector('#error-overlay .border-2 p.text-error').innerText = "CODE: TKT_ALREADY_USED";
+                    document.querySelector('#error-overlay .border-2 p.text-on-surface-variant').innerText = `Scanned: ${scanTime} at ${ticket.scanGate || 'Gate 4'}`;
+                } else {
+                    document.querySelector('#error-overlay h2').innerText = "Ticket Not Found";
+                    document.querySelector('#error-overlay p.mb-lg').innerText = "The scanned ID does not exist in the database.";
+                    document.querySelector('#error-overlay .border-2 p.text-error').innerText = "CODE: TKT_NOT_FOUND";
+                    document.querySelector('#error-overlay .border-2 p.text-on-surface-variant').innerText = `Checked ID: ${ticketId}`;
+                }
+                document.getElementById('error-overlay').classList.remove('hidden');
+                document.getElementById('error-overlay').classList.add('flex');
+            }
+            
+            await updateAttendance();
+        }
+
+        function hideOverlay(id) {
+            document.getElementById(id).classList.add('hidden');
+            document.getElementById(id).classList.remove('flex');
+        }
+
+        window.showHistory = async function() {
+            const historyList = document.getElementById('history-list');
+            if (!historyList) return;
+            
+            historyList.innerHTML = '';
+            const logs = await VantageDB.getLogs();
+            
+            if (logs.length === 0) {
+                historyList.innerHTML = '<div class="text-center py-8 text-on-surface-variant/50 font-label-sm">No scans recorded yet.</div>';
+            } else {
+                logs.forEach(log => {
+                    const time = new Date(log.timestamp).toLocaleTimeString();
+                    const item = document.createElement('div');
+                    
+                    if (log.type === 'success') {
+                        item.className = 'p-3 bg-surface-container-high/60 rounded-lg flex items-center justify-between border border-emerald-500/10 text-left';
+                        item.innerHTML = `
+                            <div class="flex items-center space-x-3">
+                                <span class="material-symbols-outlined text-emerald-400">check_circle</span>
+                                <div>
+                                    <p class="font-label-sm text-on-surface font-bold">${log.attendeeName}</p>
+                                    <p class="text-[10px] text-on-surface-variant">Verified ID: ${log.ticketId}</p>
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-on-surface-variant font-mono">${time}</p>
+                        `;
+                    } else {
+                        item.className = 'p-3 bg-error-container/10 border border-error/20 rounded-lg flex items-center justify-between text-left';
+                        item.innerHTML = `
+                            <div class="flex items-center space-x-3">
+                                <span class="material-symbols-outlined text-error">error</span>
+                                <div>
+                                    <p class="font-label-sm text-error font-bold">${log.message}</p>
+                                    <p class="text-[10px] text-on-surface-variant">Checked ID: ${log.ticketId}</p>
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-on-surface-variant font-mono">${time}</p>
+                        `;
+                    }
+                    historyList.appendChild(item);
+                });
+            }
+            
+            document.getElementById('history-overlay').classList.remove('hidden');
+            document.getElementById('history-overlay').classList.add('flex');
+        };
+
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (window.navigator && window.navigator.vibrate) {
+                    window.navigator.vibrate(50);
+                }
+            });
+        });
+
+        const manualInput = document.getElementById('ticket-id');
+        manualInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const val = manualInput.value.trim();
+                if (val) {
+                    performScan(val);
+                    manualInput.value = '';
+                }
+            }
+        });
+        
+        window.simulateScan = async function(type) {
+            const val = manualInput.value.trim();
+            if (val) {
+                performScan(val);
+                manualInput.value = '';
+            } else {
+                if (type === 'success') {
+                    const tickets = await VantageDB.getPurchasedTickets();
+                    if (tickets.length > 0) {
+                        performScan(tickets[0].id);
+                    } else {
+                        const events = await VantageDB.getEvents();
+                        const eventKeys = Object.keys(events);
+                        if (eventKeys.length > 0) {
+                            const event = events[eventKeys[0]];
+                            const tier = event.tiers[0];
+                            const basePrice = tier.price;
+                            const totalPaid = basePrice * 1.08;
+                            const dummy = {
+                                id: "VT-" + Math.floor(10000 + Math.random() * 90000),
+                                attendeeName: "Test Guest",
+                                attendeeEmail: "guest@example.com",
+                                eventName: event.title,
+                                eventId: event.id,
+                                tierName: tier.name,
+                                price: basePrice,
+                                quantity: 1,
+                                totalPaid: parseFloat(totalPaid.toFixed(2)),
+                                purchaseDate: new Date().toISOString(),
+                                status: "valid"
+                            };
+                            await VantageDB.saveTicket(dummy);
+                            performScan(dummy.id);
+                        } else {
+                            performScan("VT-INVALID");
+                        }
+                    }
+                } else {
+                    performScan("VT-INVALID");
+                }
+            }
+        };
+
+        // Setup real-time listener
+        function setupRealtime() {
+            const client = VantageDB.getSupabaseClient();
+            client
+                .channel('schema-db-changes')
+                .on(
+                    'postgres_changes',
+                    { event: '*', schema: 'public', table: 'tickets' },
+                    async payload => {
+                        console.log('Tickets changed in realtime:', payload);
+                        await updateAttendance();
+                    }
+                )
+                .on(
+                    'postgres_changes',
+                    { event: '*', schema: 'public', table: 'logs' },
+                    async payload => {
+                        console.log('Logs changed in realtime:', payload);
+                        const historyOverlay = document.getElementById('history-overlay');
+                        if (historyOverlay && !historyOverlay.classList.contains('hidden')) {
+                            await showHistory();
+                        }
+                    }
+                )
+                .subscribe();
+        }
+
+        window.addEventListener('storage', async () => {
+            await updateAttendance();
+        });
+
+        // Initialize UI & updates
+        (async () => {
+            await updateAttendance();
+            setupRealtime();
+        })();
+
+        // Scanner Security Gate Validation
+        (function() {
+            const auth = sessionStorage.getItem('vantage_scanner_authenticated');
+            const loginScreen = document.getElementById('scanner-login-screen');
+            const content = document.getElementById('scanner-portal-content');
+            
+            if (auth === 'true') {
+                loginScreen.classList.add('hidden');
+                content.classList.remove('hidden');
+                if (typeof startCameraScanner === 'function') startCameraScanner();
+            } else {
+                loginScreen.classList.remove('hidden');
+                content.classList.add('hidden');
+            }
+            
+            const form = document.getElementById('scanner-login-form');
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const pwd = document.getElementById('scanner-password').value;
+                    
+                    // Verify password with Supabase setting
+                    const supabase = VantageDB.getSupabaseClient();
+                    const { data, error } = await supabase
+                        .from('vantage_settings')
+                        .select('value')
+                        .eq('key', 'scanner_password')
+                        .maybeSingle();
+                        
+                    const savedPwd = (!error && data) ? data.value : 'YashbotJgi';
+                    
+                    if (pwd === savedPwd) {
+                        localStorage.setItem('vantage_scanner_password', pwd);
+                        sessionStorage.setItem('vantage_scanner_authenticated', 'true');
+                        loginScreen.classList.add('hidden');
+                        content.classList.remove('hidden');
+                        if (typeof updateAttendance === 'function') await updateAttendance();
+                        if (typeof startCameraScanner === 'function') startCameraScanner();
+                    } else {
+                        const errorMsg = document.getElementById('scanner-error-msg');
+                        errorMsg.classList.remove('hidden');
+                        document.getElementById('scanner-password').value = '';
+                    }
+                });
+            }
+        window.logoutScanner = function() {
+            if (confirm("Are you sure you want to logout from the Staff Portal?")) {
+                sessionStorage.removeItem('vantage_scanner_authenticated');
+                window.location.reload();
+            }
+        };
+        })();
+    </script>
+</body></html>

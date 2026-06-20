@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "builds": [
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.webp",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    { "src": "/details", "dest": "/details.html" },
+    { "src": "/admin", "dest": "/admin.html" },
+    { "src": "/scanner", "dest": "/scanner.html" },
+    { "src": "/db.js", "dest": "/db.js" },
+    { "src": "/(.*)", "dest": "/$1" }
+  ]
+}

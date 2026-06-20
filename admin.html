@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VANTAGE Admin Portal</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="db.js"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary": "#303032",
+                      "primary-fixed": "#ffdad8",
+                      "secondary-fixed": "#e4e2e4",
+                      "background": "#111415",
+                      "error-container": "#93000a",
+                      "surface-container-lowest": "#0c0f10",
+                      "primary-container": "#ff535b",
+                      "on-secondary-fixed": "#1b1b1d",
+                      "on-surface": "#e1e3e4",
+                      "tertiary-fixed-dim": "#c8c6c9",
+                      "inverse-on-surface": "#2e3132",
+                      "surface-variant": "#323536",
+                      "surface-container": "#1d2021",
+                      "secondary-container": "#474649",
+                      "on-primary-fixed": "#410007",
+                      "on-error": "#690005",
+                      "tertiary-fixed": "#e4e2e5",
+                      "tertiary-container": "#919094",
+                      "outline-variant": "#5b403f",
+                      "primary": "#ffb3b1",
+                      "surface-bright": "#373a3b",
+                      "secondary-fixed-dim": "#c8c6c8",
+                      "on-primary-container": "#5b000e",
+                      "inverse-primary": "#bb152c",
+                      "outline": "#ab8987",
+                      "on-background": "#e1e3e4",
+                      "surface-tint": "#ffb3b1",
+                      "on-tertiary-fixed": "#1b1b1e",
+                      "surface-dim": "#111415",
+                      "on-secondary-container": "#b7b4b7",
+                      "on-primary": "#680011",
+                      "on-tertiary": "#303033",
+                      "secondary": "#c8c6c8",
+                      "surface-container-highest": "#323536",
+                      "surface-container-high": "#282a2b",
+                      "inverse-surface": "#e1e3e4",
+                      "on-error-container": "#ffdad6",
+                      "primary-fixed-dim": "#ffb3b1",
+                      "on-tertiary-container": "#29292c",
+                      "surface": "#111415",
+                      "on-secondary-fixed-variant": "#474649",
+                      "error": "#ffb4ab",
+                      "surface-container-low": "#191c1d",
+                      "on-primary-fixed-variant": "#92001c",
+                      "on-tertiary-fixed-variant": "#47464a",
+                      "on-surface-variant": "#e4bebc",
+                      "tertiary": "#c8c6c9"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base": "8px",
+                      "md": "24px",
+                      "sm": "12px",
+                      "lg": "48px",
+                      "margin-desktop": "64px",
+                      "xs": "4px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px",
+                      "xl": "80px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["Geist"],
+                      "headline-lg": ["Geist"],
+                      "body-md": ["Inter"],
+                      "label-sm": ["Geist"],
+                      "display-lg": ["Geist"],
+                      "title-md": ["Geist"],
+                      "body-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                      "title-md": ["20px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+      </script>
+<style>
+        body {
+            background-color: #0B0B0D;
+            color: #e1e3e4;
+            font-family: 'Inter', sans-serif;
+        }
+        .glass-card {
+            background: rgba(26, 26, 28, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .crimson-glow {
+            box-shadow: 0px 8px 24px rgba(230, 57, 70, 0.2);
+        }
+        .crimson-gradient {
+            background: linear-gradient(135deg, #bb152c 0%, #ff535b 100%);
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="overflow-hidden">
+<div id="admin-login-screen" class="min-h-screen flex items-center justify-center bg-[#0B0B0D] px-4 hidden">
+    <div class="w-full max-w-md p-lg glass-card rounded-2xl space-y-md text-center border border-outline-variant/30 crimson-glow">
+        <h1 class="font-display-lg text-[40px] text-primary tracking-tighter mb-xs">VANTAGE</h1>
+        <p class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-widest mb-md">Admin Portal Security Gate</p>
+        
+        <form id="admin-login-form" class="space-y-sm text-left">
+            <div class="flex flex-col gap-xs">
+                <label class="font-label-sm text-label-sm text-on-surface-variant" for="admin-password">PASSWORD</label>
+                <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="admin-password" type="password" placeholder="••••••••" required />
+            </div>
+            <p id="admin-error-msg" class="text-error font-body-md text-sm hidden">Access Denied: Invalid Credentials</p>
+            <button type="submit" class="w-full crimson-gradient hover:scale-[1.02] text-white font-bold py-3 rounded-full crimson-glow transition-all uppercase tracking-wider text-label-sm mt-base">
+                Authenticate
+            </button>
+        </form>
+        
+        <div class="pt-base border-t border-outline-variant/20 flex justify-center">
+            <a href="/" class="text-on-surface-variant hover:text-white font-label-sm text-[11px] uppercase tracking-wider transition-colors flex items-center gap-xs">
+                <span class="material-symbols-outlined text-[14px]">arrow_back</span> Back to Main Site
+            </a>
+        </div>
+    </div>
+</div>
+
+<div id="admin-dashboard-content" class="hidden">
+<!-- SIDE NAVIGATION -->
+<!-- Applying SideNavBar JSON logic: h-screen w-64 fixed bg-surface-container-low border-r -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant flex flex-col p-sm space-y-base z-50">
+<!-- Brand Section -->
+<div class="px-4 py-8">
+<h1 class="font-display-lg text-headline-lg text-primary tracking-tighter">VANTAGE</h1>
+<div class="mt-4 flex items-center space-x-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant">
+<img alt="Admin User Profile" class="w-full h-full object-cover" data-alt="A professional portrait of a senior event manager in his 40s, wearing a crisp dark blazer. The lighting is dramatic and cinematic with deep shadows and subtle red rim lighting, reflecting the Vantage brand's premium dark-mode aesthetic and secure event environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBF47kuWsCKbN617zH2ADcc58jJKdRSQorDNMjB7PRcUzFSk_yTZJWfgcED9id-Nud979IxRhi0W2aZiMdf1OHxhshnYvhqF08p_KkAuDhGVQtdFjhMOU3Sx92Fwt234E4Gl3LOrCGGbYujFpJ6ymLl_z0acZfagxU3K5-GvryzICs4844RjyEn0bq_4X0asN1E_wz8nYNX3XYmVX932plrbXUuUWch88Thf2Sbv6Aql5NWA4fS4wxwxumM-WqAFVZcTPn6JvSVIXCz"/>
+</div>
+<div>
+<p class="font-title-md text-label-sm text-on-surface font-bold leading-tight">Admin Portal</p>
+<p class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-widest">Vantage Control</p>
+</div>
+</div>
+</div>
+<!-- Main Tabs -->
+<nav class="flex-1 space-y-1 px-2">
+<!-- Active Tab: Dashboard -->
+<a id="tab-dashboard-btn" class="flex items-center space-x-3 px-4 py-3 bg-primary-container text-on-primary-container rounded-lg font-bold transition-all duration-200 cursor-pointer">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-title-md text-label-sm">Dashboard</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant/50 rounded-lg transition-all duration-200 active:translate-x-1 cursor-pointer" href="/scanner">
+<span class="material-symbols-outlined">qr_code_scanner</span>
+<span class="font-title-md text-label-sm">Scanner</span>
+</a>
+<a id="tab-events-btn" class="flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant/50 rounded-lg transition-all duration-200 active:translate-x-1 cursor-pointer">
+<span class="material-symbols-outlined">confirmation_number</span>
+<span class="font-title-md text-label-sm">Events Manager</span>
+</a>
+<a id="tab-revenue-btn" class="flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant/50 rounded-lg transition-all duration-200 active:translate-x-1 cursor-pointer">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-title-md text-label-sm">Revenue</span>
+</a>
+<a id="tab-attendees-btn" class="flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant/50 rounded-lg transition-all duration-200 active:translate-x-1 cursor-pointer">
+<span class="material-symbols-outlined">group</span>
+<span class="font-title-md text-label-sm">Attendees</span>
+</a>
+<a id="tab-settings-btn" class="flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant/50 rounded-lg transition-all duration-200 active:translate-x-1 cursor-pointer">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-title-md text-label-sm">Settings</span>
+</a>
+</nav>
+<!-- CTA & Footer -->
+<div class="px-2 pb-4 space-y-4">
+<button class="w-full crimson-gradient text-white font-bold py-3 px-4 rounded-full crimson-glow flex items-center justify-center space-x-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span class="font-label-sm uppercase">Create Event</span>
+</button>
+<div class="pt-4 border-t border-outline-variant space-y-1">
+<a class="flex items-center space-x-3 px-4 py-2 text-on-surface-variant hover:bg-surface-variant/50 rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-sm">Help</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-2 text-on-surface-variant hover:bg-surface-variant/50 rounded-lg transition-all duration-200 cursor-pointer" onclick="logoutAdmin(event)">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-sm">Logout</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- MAIN CONTENT AREA -->
+<main class="ml-64 h-screen overflow-y-auto scrollbar-hide bg-background">
+<!-- Header -->
+<header class="flex justify-between items-center px-gutter py-8">
+<div>
+<h2 id="page-title" class="font-headline-lg text-headline-lg text-on-surface">Overview</h2>
+<p id="page-subtitle" class="text-on-surface-variant font-body-md">Welcome back, Chief Operations. Here is your current event health.</p>
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative group">
+<input id="global-search" oninput="handleGlobalSearch()" class="bg-surface-container-high border-none rounded-full px-6 py-2 w-64 text-on-surface placeholder:text-on-surface-variant/50 focus:ring-1 focus:ring-primary transition-all" placeholder="Search data..." type="text"/>
+<span class="material-symbols-outlined absolute right-4 top-2.5 text-on-surface-variant/50">search</span>
+</div>
+<button class="w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-on-surface">notifications</span>
+</button>
+</div>
+</header>
+<!-- Dashboard Canvas -->
+<div class="px-gutter pb-xl space-y-gutter">
+<div id="dashboard-view" class="space-y-gutter">
+<!-- Analytics Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<!-- Total Revenue -->
+<div class="md:col-span-2 glass-card rounded-xl p-md flex flex-col justify-between h-48 relative overflow-hidden group">
+<div class="z-10">
+<p class="text-on-surface-variant font-label-sm uppercase tracking-widest">Total Revenue</p>
+<h3 id="stat-revenue" class="font-display-lg text-display-lg text-on-surface mt-2">₹12,845,000.00</h3>
+<div class="flex items-center space-x-2 mt-4 text-emerald-400">
+<span class="material-symbols-outlined text-[18px]">trending_up</span>
+<span class="font-label-sm">+12.4% from last month</span>
+</div>
+</div>
+<!-- Background Accent -->
+<div class="absolute -right-4 -bottom-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-[160px] text-primary">payments</span>
+</div>
+</div>
+<!-- Tickets Sold -->
+<div class="glass-card rounded-xl p-md flex flex-col justify-between h-48 relative overflow-hidden">
+<div class="z-10">
+<p class="text-on-surface-variant font-label-sm uppercase tracking-widest">Tickets Sold</p>
+<h3 id="stat-sold" class="font-headline-lg text-headline-lg text-on-surface mt-2">42,892</h3>
+<p class="text-on-surface-variant font-label-sm mt-4">Capacity: 85%</p>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full mt-2">
+<div class="bg-primary h-full rounded-full" style="width: 85%;"></div>
+</div>
+</div>
+<!-- Attendance % -->
+<div class="glass-card rounded-xl p-md flex flex-col justify-between h-48 relative overflow-hidden">
+<div class="z-10">
+<p class="text-on-surface-variant font-label-sm uppercase tracking-widest">Attendance %</p>
+<h3 id="stat-attendance" class="font-headline-lg text-headline-lg text-on-surface mt-2">94.2%</h3>
+<p class="text-on-surface-variant font-label-sm mt-4">Real-time Check-in</p>
+</div>
+<div class="absolute right-6 top-6">
+<div class="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+</div>
+</div>
+</section>
+
+<!-- Booking Trend Graph -->
+<section class="glass-card rounded-xl p-md">
+    <div class="flex justify-between items-center mb-md">
+        <div>
+            <h4 class="font-title-md text-on-surface">Booking Volume Trend</h4>
+            <p class="text-xs text-on-surface-variant">Daily ticket bookings over the last 7 days</p>
+        </div>
+        <div class="text-right">
+            <span id="trend-peak" class="text-xs font-bold text-primary">Peak: 0 bookings/day</span>
+        </div>
+    </div>
+    <div class="h-28 w-full" id="trend-sparkline-container">
+        <!-- SVG Sparkline will be injected here -->
+    </div>
+</section>
+
+<!-- Main Operational Area -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Recent Bookings Table -->
+<section class="lg:col-span-2 space-y-base">
+<div class="flex justify-between items-end mb-4 px-1">
+<h4 class="font-title-md text-on-surface">Recent Bookings</h4>
+<button class="text-primary font-label-sm hover:underline">View All</button>
+</div>
+<div class="glass-card rounded-xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant border-b border-outline-variant">
+<th class="px-6 py-4 font-label-sm uppercase tracking-wider">Attendee</th>
+<th class="px-6 py-4 font-label-sm uppercase tracking-wider">Event</th>
+<th class="px-6 py-4 font-label-sm uppercase tracking-wider">Amount</th>
+<th class="px-6 py-4 font-label-sm uppercase tracking-wider">Status</th>
+</tr>
+</thead>
+<tbody id="bookings-tbody" class="divide-y divide-outline-variant/30">
+<tr class="hover:bg-surface-variant/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-full bg-tertiary/20 flex items-center justify-center text-tertiary">JD</div>
+<div>
+<p class="font-body-md text-on-surface text-sm">Julian Dash</p>
+<p class="text-[11px] text-on-surface-variant">julian@example.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-sm text-on-surface-variant">Midnight Resonance</td>
+<td class="px-6 py-4 font-body-md text-sm text-on-surface">₹24,000.00</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-emerald-400/10 text-emerald-400 font-label-sm text-[10px]">Success</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-variant/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary">SC</div>
+<div>
+<p class="font-body-md text-on-surface text-sm">Sarah Chen</p>
+<p class="text-[11px] text-on-surface-variant">schen.tickets@web.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-sm text-on-surface-variant">VANTAGE VIP Gala</td>
+<td class="px-6 py-4 font-body-md text-sm text-on-surface">₹1,50,000.00</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-emerald-400/10 text-emerald-400 font-label-sm text-[10px]">Success</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-variant/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center text-secondary">MK</div>
+<div>
+<p class="font-body-md text-on-surface text-sm">Marcus Kaine</p>
+<p class="text-[11px] text-on-surface-variant">m.kaine@corp.net</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-sm text-on-surface-variant">Stadium Series: 01</td>
+<td class="px-6 py-4 font-body-md text-sm text-on-surface">₹8,500.00</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-[10px]">Pending</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Monitor Live Scans Feed -->
+<section class="space-y-base">
+<div class="flex justify-between items-end mb-4 px-1">
+<h4 class="font-title-md text-on-surface">Monitor Live Scans</h4>
+<div class="flex items-center space-x-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Live</span>
+</div>
+</div>
+<div id="live-scans-feed" class="glass-card rounded-xl p-base h-[400px] overflow-y-auto scrollbar-hide space-y-3">
+<!-- Scan Entry -->
+<div class="p-3 bg-surface-container-high rounded-lg flex items-center justify-between group">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-lg overflow-hidden border border-outline-variant bg-surface-dim">
+<span class="material-symbols-outlined flex items-center justify-center h-full text-emerald-400">check_circle</span>
+</div>
+<div>
+<p class="font-label-sm text-on-surface">Gate 4 - VIP North</p>
+<p class="text-[11px] text-on-surface-variant">Ticket ID: #45923-B</p>
+</div>
+</div>
+<p class="text-[10px] text-on-surface-variant font-mono">12:45:01</p>
+</div>
+<!-- Scan Entry -->
+<div class="p-3 bg-surface-container-high rounded-lg flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-lg overflow-hidden border border-outline-variant bg-surface-dim">
+<span class="material-symbols-outlined flex items-center justify-center h-full text-emerald-400">check_circle</span>
+</div>
+<div>
+<p class="font-label-sm text-on-surface">Gate 1 - General</p>
+<p class="text-[11px] text-on-surface-variant">Ticket ID: #10234-C</p>
+</div>
+</div>
+<p class="text-[10px] text-on-surface-variant font-mono">12:44:58</p>
+</div>
+<!-- Error Scan Entry -->
+<div class="p-3 bg-error-container/20 border border-error/20 rounded-lg flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-lg overflow-hidden border border-error/30 bg-surface-dim">
+<span class="material-symbols-outlined flex items-center justify-center h-full text-error">error</span>
+</div>
+<div>
+<p class="font-label-sm text-error">Invalid Ticket - Gate 2</p>
+<p class="text-[11px] text-on-surface-variant">Duplicate ID Detected</p>
+</div>
+</div>
+<p class="text-[10px] text-on-surface-variant font-mono">12:44:42</p>
+</div>
+<!-- Scan Entry -->
+<div class="p-3 bg-surface-container-high rounded-lg flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-lg overflow-hidden border border-outline-variant bg-surface-dim">
+<span class="material-symbols-outlined flex items-center justify-center h-full text-emerald-400">check_circle</span>
+</div>
+<div>
+<p class="font-label-sm text-on-surface">Gate 1 - General</p>
+<p class="text-[11px] text-on-surface-variant">Ticket ID: #10235-C</p>
+</div>
+</div>
+<p class="text-[10px] text-on-surface-variant font-mono">12:44:30</p>
+</div>
+<div class="text-center py-4">
+<button class="text-on-surface-variant font-label-sm text-[11px] hover:text-primary transition-colors">Expand Full Activity Log</button>
+</div>
+</div>
+</section>
+</div>
+<!-- Promotion / Feature Card -->
+<section class="relative w-full h-48 rounded-2xl overflow-hidden group">
+<img alt="Event Crowd Background" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A wide angle cinematic shot of a vibrant outdoor music festival crowd under a purple sunset. The lighting uses warm golden hour glows mixed with deep violet and crimson stage lights, perfectly echoing the premium Vantage brand visual style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrT1YszrJuPo2MFihIRvlfNmc9oLh8OD3JzVBtf738mBZ2e6LW8mgXgLsMvPeeTM_SKiZL5H4xaaGZBmjkLX5OPYw5hJTLDYAk6wMEars-CVVTRgoo-bE_sbb0-1Wc5XNynK9WDd1ZUGccchvto3Vam2NdmYlDkila1RENzYI_VwOy27ilTcxHa78O-OmXNMxyLwEHGD8-niFE3rzH45E-5Uf74y8WbyvwlBNbttnS5Yx9DjQIULlsUeO79Uzhu0uhRjngkvdaYuZS"/>
+<div class="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent flex flex-col justify-center px-12">
+<h5 class="font-headline-lg text-on-surface">Maximize Your Reach</h5>
+<p class="text-on-surface-variant max-w-md mt-2">New Vantage marketing tools are now available for all organizers. Boost ticket sales with AI-powered audience targeting.</p>
+<button class="mt-6 w-fit glass-card px-8 py-3 rounded-full font-label-sm hover:bg-white/10 transition-colors border-white/20">Learn More</button>
+</div>
+</section>
+</div>
+<div id="events-view" class="hidden grid grid-cols-1 md:grid-cols-2 gap-gutter pb-xl"></div>
+
+<!-- REVENUE VIEW -->
+<div id="revenue-view" class="hidden space-y-gutter pb-xl">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+        <!-- Metric 1: Total Gross Revenue -->
+        <div class="glass-card p-md rounded-2xl flex flex-col justify-between crimson-glow">
+            <div class="flex justify-between items-center">
+                <span class="font-label-sm text-on-surface-variant uppercase font-bold tracking-widest text-[10px]">TOTAL GROSS REVENUE</span>
+                <span class="material-symbols-outlined text-primary text-[24px]">payments</span>
+            </div>
+            <div class="mt-4">
+                <h3 id="revenue-gross" class="font-headline-lg text-[32px] text-white font-bold">₹0.00</h3>
+                <p class="text-on-surface-variant font-label-sm mt-1">Including 8% processing fees</p>
+            </div>
+        </div>
+        <!-- Metric 2: Net Ticket Sales -->
+        <div class="glass-card p-md rounded-2xl flex flex-col justify-between">
+            <div class="flex justify-between items-center">
+                <span class="font-label-sm text-on-surface-variant uppercase font-bold tracking-widest text-[10px]">NET SALES</span>
+                <span class="material-symbols-outlined text-emerald-400 text-[24px]">account_balance_wallet</span>
+            </div>
+            <div class="mt-4">
+                <h3 id="revenue-net" class="font-headline-lg text-[32px] text-emerald-400 font-bold">₹0.00</h3>
+                <p class="text-on-surface-variant font-label-sm mt-1">Direct organizer payout</p>
+            </div>
+        </div>
+        <!-- Metric 3: Total Platform Fees -->
+        <div class="glass-card p-md rounded-2xl flex flex-col justify-between">
+            <div class="flex justify-between items-center">
+                <span class="font-label-sm text-on-surface-variant uppercase font-bold tracking-widest text-[10px]">PLATFORM FEES (8%)</span>
+                <span class="material-symbols-outlined text-indigo-400 text-[24px]">percent</span>
+            </div>
+            <div class="mt-4">
+                <h3 id="revenue-fees" class="font-headline-lg text-[32px] text-indigo-400 font-bold">₹0.00</h3>
+                <p class="text-on-surface-variant font-label-sm mt-1">Collected at checkout</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue Transactions Table -->
+    <div class="glass-card rounded-2xl border border-outline-variant/30 overflow-hidden">
+        <div class="px-6 py-5 border-b border-outline-variant/30 flex justify-between items-center flex-wrap gap-sm">
+            <h3 class="font-title-md text-white font-bold flex items-center gap-xs">
+                <span class="material-symbols-outlined text-primary">receipt_long</span> Transaction Registry
+            </h3>
+            <button onclick="exportRevenueCSV()" class="bg-surface-container-high border border-outline-variant hover:bg-white/5 text-white px-4 py-2 rounded-lg font-label-sm text-label-sm uppercase tracking-wider transition-colors active:scale-95 flex items-center gap-xs">
+                <span class="material-symbols-outlined text-[16px]">download</span> Export CSV
+            </button>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-surface-container-low border-b border-outline-variant/20">
+                        <th class="px-6 py-4 font-label-sm text-on-surface-variant uppercase text-[11px] tracking-widest">Transaction ID</th>
+                        <th class="px-6 py-4 font-label-sm text-on-surface-variant uppercase text-[11px] tracking-widest">Attendee</th>
+                        <th class="px-6 py-4 font-label-sm text-on-surface-variant uppercase text-[11px] tracking-widest">Event & Tier</th>
+                        <th class="px-6 py-4 font-label-sm text-on-surface-variant uppercase text-[11px] tracking-widest text-right">Base Fare</th>
+                        <th class="px-6 py-4 font-label-sm text-on-surface-variant uppercase text-[11px] tracking-widest text-right">Fee (8%)</th>
+                        <th class="px-6 py-4 font-label-sm text-on-surface-variant uppercase text-[11px] tracking-widest text-right">Total Paid</th>
+                    </tr>
+                </thead>
+                <tbody id="revenue-tbody" class="divide-y divide-outline-variant/10 font-body-md text-sm">
+                    <!-- Transactions populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ATTENDEES VIEW -->
+<div id="attendees-view" class="hidden space-y-gutter pb-xl">
+    <div class="flex flex-col md:flex-row gap-sm justify-between items-stretch md:items-center">
+        <!-- Search bar -->
+        <div class="relative flex-grow max-w-md">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+            <input id="attendees-search" type="text" placeholder="Search by name, email, or ticket ID..." oninput="filterAttendeesList()" class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-10 pr-4 py-2 font-body-md text-on-surface focus:outline-none focus:border-primary-container" />
+        </div>
+        <!-- Status Filter Tabs -->
+        <div class="flex bg-surface-container-low border border-outline-variant/50 p-1 rounded-full w-fit">
+            <button onclick="setAttendeeFilter('all')" id="btn-filter-all" class="px-4 py-1.5 rounded-full font-label-sm text-[11px] uppercase tracking-wider bg-primary-container text-on-primary-container font-bold transition-all">All</button>
+            <button onclick="setAttendeeFilter('scanned')" id="btn-filter-scanned" class="px-4 py-1.5 rounded-full font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant transition-all hover:text-white ml-1">Checked In</button>
+            <button onclick="setAttendeeFilter('valid')" id="btn-filter-valid" class="px-4 py-1.5 rounded-full font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant transition-all hover:text-white ml-1">Pending</button>
+        </div>
+    </div>
+
+    <!-- Attendees List Table -->
+    <div class="glass-card rounded-2xl border border-outline-variant/30 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-surface-container-low border-b border-outline-variant/20">
+                        <th class="px-6 py-4 font-label-sm text-on-surface-variant uppercase text-[11px] tracking-widest">Attendee Info</th>
+                        <th class="px-6 py-4 font-label-sm text-on-surface-variant uppercase text-[11px] tracking-widest">Ticket ID</th>
+                        <th class="px-6 py-4 font-label-sm text-on-surface-variant uppercase text-[11px] tracking-widest">Registered Experience</th>
+                        <th class="px-6 py-4 font-label-sm text-on-surface-variant uppercase text-[11px] tracking-widest text-center">Quantity</th>
+                        <th class="px-6 py-4 font-label-sm text-on-surface-variant uppercase text-[11px] tracking-widest">Status</th>
+                        <th class="px-6 py-4 font-label-sm text-on-surface-variant uppercase text-[11px] tracking-widest">Check-In details</th>
+                    </tr>
+                </thead>
+                <tbody id="attendees-tbody" class="divide-y divide-outline-variant/10 font-body-md text-sm">
+                    <!-- Attendees populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- SETTINGS VIEW -->
+<div id="settings-view" class="hidden space-y-gutter pb-xl max-w-3xl">
+    <!-- Passwords Update Form -->
+    <div class="glass-card p-md rounded-2xl border border-outline-variant/30 space-y-md">
+        <h3 class="font-title-md text-white font-bold flex items-center gap-xs">
+            <span class="material-symbols-outlined text-primary">security</span> Access Credentials
+        </h3>
+        <p class="text-on-surface-variant font-body-md text-sm leading-relaxed">
+            Update portal security passwords. Changes take effect immediately.
+        </p>
+        
+        <form id="settings-passwords-form" onsubmit="savePortalPasswords(event)" class="space-y-md pt-base">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-sm">
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant" for="settings-admin-pwd">ADMIN PASSWORD</label>
+                    <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="settings-admin-pwd" type="text" required />
+                </div>
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant" for="settings-scanner-pwd">SCANNER PASSWORD</label>
+                    <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="settings-scanner-pwd" type="text" required />
+                </div>
+            </div>
+            <div class="flex flex-col gap-xs pt-sm">
+                <label class="font-label-sm text-label-sm text-on-surface-variant" for="settings-google-client-id">GOOGLE OAUTH CLIENT ID (Optional)</label>
+                <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="settings-google-client-id" type="text" placeholder="e.g. 123456789-abc.apps.googleusercontent.com" />
+            </div>
+            <div class="flex justify-end pt-base">
+                <button type="submit" class="crimson-gradient hover:scale-[1.02] text-white font-bold py-2.5 px-6 rounded-full crimson-glow transition-all uppercase tracking-wider text-label-sm">
+                    Save Passwords
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Platform Settings -->
+    <div class="glass-card p-md rounded-2xl border border-outline-variant/30 space-y-md">
+        <h3 class="font-title-md text-white font-bold flex items-center gap-xs">
+            <span class="material-symbols-outlined text-primary">settings_applications</span> System Settings
+        </h3>
+        <div class="space-y-sm">
+            <div class="flex justify-between items-center border-b border-outline-variant/20 pb-sm">
+                <div>
+                    <p class="font-body-md text-white text-sm font-bold">Standard Currency</p>
+                    <p class="text-on-surface-variant text-[12px]">All ticketing amounts are calculated in Indian Rupees</p>
+                </div>
+                <span class="px-4 py-1.5 rounded-full bg-surface-container-high text-white font-label-sm text-[12px] font-bold">INR (₹)</span>
+            </div>
+            <div class="flex justify-between items-center border-b border-outline-variant/20 pb-sm">
+                <div>
+                    <p class="font-body-md text-white text-sm font-bold">Convenience Fee Percentage</p>
+                    <p class="text-on-surface-variant text-[12px]">Standard checkout fee applied to base ticket pricing</p>
+                </div>
+                <span class="px-4 py-1.5 rounded-full bg-surface-container-high text-white font-label-sm text-[12px] font-bold">8.0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Database Reset / Caution Actions -->
+    <div class="glass-card p-md rounded-2xl border border-red-500/20 bg-red-950/5 space-y-md">
+        <h3 class="font-title-md text-red-400 font-bold flex items-center gap-xs">
+            <span class="material-symbols-outlined text-red-400">warning</span> Danger Zone
+        </h3>
+        <p class="text-on-surface-variant font-body-md text-sm leading-relaxed">
+            Performing a reset will restore all default mock events, clear all checked-in or scanned tickets, reset dashboard stats to defaults, and clear scan activity feeds.
+        </p>
+        <div class="flex pt-base">
+            <button onclick="resetSystemDB()" class="bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-red-400 font-bold py-2.5 px-6 rounded-full transition-all uppercase tracking-wider text-label-sm">
+                Clear & Reset Database
+            </button>
+        </div>
+    </div>
+</div>
+</div>
+<!-- Footer -->
+<!-- Applying Footer JSON logic -->
+<footer class="w-full py-lg border-t border-outline-variant bg-surface-container-lowest">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop space-y-md md:space-y-0">
+<p class="font-label-sm text-on-surface-variant">© 2024 VANTAGE TICKETING. ALL RIGHTS RESERVED.</p>
+<div class="flex space-x-gutter">
+<a class="font-label-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">Privacy Policy</a>
+<a class="font-label-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">Terms of Service</a>
+<a class="font-label-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">Cookies</a>
+<a class="font-label-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">Accessibility</a>
+</div>
+</div>
+</footer>
+</main>
+<!-- Scanner Trigger FAB (From Style Guidance) -->
+<button onclick="location.href='/scanner'" class="fixed bottom-8 right-8 w-16 h-16 rounded-full crimson-gradient flex items-center justify-center text-white crimson-glow hover:scale-110 active:scale-90 transition-all z-50">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">qr_code_scanner</span>
+</button>
+
+<!-- Edit Event Modal -->
+<div id="edit-event-modal" class="fixed inset-0 z-[100] flex items-center justify-center px-4 hidden">
+    <div class="absolute inset-0 bg-background/80 backdrop-blur-md"></div>
+    <div class="status-overlay glass-card w-full max-w-2xl p-lg rounded-2xl flex flex-col shadow-2xl relative border-primary-container/20 max-h-[90vh] overflow-y-auto scrollbar-hide">
+        <button onclick="closeEditModal()" class="absolute top-4 right-4 text-on-surface-variant hover:text-white flex items-center justify-center">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <h3 class="font-headline-lg text-headline-lg mb-sm text-white">Edit Event Details</h3>
+        <p class="text-on-surface-variant font-body-md mb-md">Modify details for this live experience.</p>
+        
+        <form id="edit-event-form" onsubmit="saveEventChanges(event)" class="space-y-sm text-left">
+            <input type="hidden" id="edit-event-id" />
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-sm">
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant" for="edit-title">EVENT TITLE</label>
+                    <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="edit-title" required type="text"/>
+                </div>
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant" for="edit-category">CATEGORY</label>
+                    <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="edit-category" required type="text"/>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-sm">
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant" for="edit-date">DATE & TIME</label>
+                    <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="edit-date" required type="text"/>
+                </div>
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant" for="edit-location">LOCATION / VENUE</label>
+                    <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="edit-location" required type="text"/>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-sm">
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant" for="edit-capacity">CAPACITY</label>
+                    <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="edit-capacity" required type="number" min="0"/>
+                </div>
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant" for="edit-doors">DOORS OPEN</label>
+                    <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="edit-doors" required type="text"/>
+                </div>
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant" for="edit-age">AGE LIMIT</label>
+                    <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="edit-age" required type="text"/>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-sm">
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant" for="edit-status">EVENT STATUS</label>
+                    <select class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="edit-status" required>
+                        <option value="active">Active (Bookings Open)</option>
+                        <option value="paused">Paused (Temporarily Disable Bookings)</option>
+                        <option value="sold_out">Sold Out</option>
+                        <option value="cancelled">Cancelled</option>
+                        <option value="draft">Draft (Admin Only)</option>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant" for="edit-image">IMAGE URL</label>
+                    <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="edit-image" required type="text"/>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-sm border-t border-outline-variant/30 pt-sm mt-md">
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant" for="edit-booking-start">BOOKING START TIME</label>
+                    <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="edit-booking-start" type="datetime-local"/>
+                </div>
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant" for="edit-booking-end">BOOKING END TIME</label>
+                    <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="edit-booking-end" type="datetime-local"/>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-sm border-t border-outline-variant/30 pt-sm mt-md">
+                <div class="flex items-center gap-xs">
+                    <input type="checkbox" id="edit-is-public" class="rounded border-outline-variant bg-surface-container-highest text-primary-container focus:ring-primary-container" />
+                    <label class="font-label-sm text-label-sm text-on-surface" for="edit-is-public">SHOW PUBLICLY</label>
+                </div>
+                <div class="flex items-center gap-xs">
+                    <input type="checkbox" id="edit-is-featured" class="rounded border-outline-variant bg-surface-container-highest text-primary-container focus:ring-primary-container" />
+                    <label class="font-label-sm text-label-sm text-on-surface" for="edit-is-featured">FEATURE ON HOMEPAGE</label>
+                </div>
+                <div class="flex items-center gap-xs">
+                    <input type="checkbox" id="edit-is-archived" class="rounded border-outline-variant bg-surface-container-highest text-primary-container focus:ring-primary-container" />
+                    <label class="font-label-sm text-label-sm text-on-surface" for="edit-is-archived">ARCHIVED</label>
+                </div>
+            </div>
+
+            <div class="border-t border-outline-variant/30 pt-sm mt-md">
+                <h4 class="font-title-md text-white mb-sm">Ticket Tiers</h4>
+                <div id="edit-tiers-container" class="space-y-sm">
+                    <!-- Dynamic tiers will go here -->
+                </div>
+            </div>
+            
+            <button type="submit" class="w-full bg-primary-container text-on-primary-container py-4 rounded-full font-bold crimson-glow active:scale-95 transition-all flex justify-center items-center gap-sm mt-md">
+                <span>Save Changes</span>
+            </button>
+        </form>
+    </div>
+</div>
+
+</div>
+
+<script>
+        document.addEventListener('click', (e) => {
+            const tr = e.target.closest('tbody tr');
+            if (tr) {
+                console.log('Viewing booking details...');
+            }
+        });
+
+        let activeTab = 'dashboard';
+        const tabDashboardBtn = document.getElementById('tab-dashboard-btn');
+        const tabEventsBtn = document.getElementById('tab-events-btn');
+        const tabRevenueBtn = document.getElementById('tab-revenue-btn');
+        const tabAttendeesBtn = document.getElementById('tab-attendees-btn');
+        const tabSettingsBtn = document.getElementById('tab-settings-btn');
+
+        const dashboardView = document.getElementById('dashboard-view');
+        const eventsView = document.getElementById('events-view');
+        const revenueView = document.getElementById('revenue-view');
+        const attendeesView = document.getElementById('attendees-view');
+        const settingsView = document.getElementById('settings-view');
+
+        const pageTitle = document.getElementById('page-title');
+        const pageSubtitle = document.getElementById('page-subtitle');
+
+        async function switchTab(tab) {
+            activeTab = tab;
+            
+            // Clear global search input on tab switch
+            const globalSearchInput = document.getElementById('global-search');
+            if (globalSearchInput) globalSearchInput.value = '';
+            
+            // Helper to reset button styling
+            const tabs = [
+                { id: 'dashboard', btn: tabDashboardBtn, view: dashboardView },
+                { id: 'events', btn: tabEventsBtn, view: eventsView },
+                { id: 'revenue', btn: tabRevenueBtn, view: revenueView },
+                { id: 'attendees', btn: tabAttendeesBtn, view: attendeesView },
+                { id: 'settings', btn: tabSettingsBtn, view: settingsView }
+            ];
+            
+            tabs.forEach(t => {
+                if (t.id === tab) {
+                    t.btn.classList.add('bg-primary-container', 'text-on-primary-container', 'font-bold');
+                    t.btn.classList.remove('text-on-surface-variant');
+                    t.view.classList.remove('hidden');
+                } else {
+                    t.btn.classList.remove('bg-primary-container', 'text-on-primary-container', 'font-bold');
+                    t.btn.classList.add('text-on-surface-variant');
+                    t.view.classList.add('hidden');
+                }
+            });
+
+            if (tab === 'dashboard') {
+                pageTitle.innerText = "Overview";
+                pageSubtitle.innerText = "Welcome back, Chief Operations. Here is your current event health.";
+                await refreshDashboard();
+            } else if (tab === 'events') {
+                pageTitle.innerText = "Event Manager";
+                pageSubtitle.innerText = "Modify details, ticket availability, and prices for active experiences.";
+                await renderEventsManager();
+            } else if (tab === 'revenue') {
+                pageTitle.innerText = "Revenue Dashboard";
+                pageSubtitle.innerText = "Real-time earnings tracking, fees breakdown, and platform transaction registry.";
+                await renderRevenueTab();
+            } else if (tab === 'attendees') {
+                pageTitle.innerText = "Attendees Roster";
+                pageSubtitle.innerText = "View registered guests, filter entry status, and search ticket verification details.";
+                await renderAttendeesTab();
+            } else if (tab === 'settings') {
+                pageTitle.innerText = "Portal Settings";
+                pageSubtitle.innerText = "Manage security credentials, view system details, and control mock database resets.";
+                await renderSettingsTab();
+            }
+        }
+
+        window.handleGlobalSearch = async function() {
+            const globalSearch = document.getElementById('global-search').value;
+            
+            if (activeTab === 'events') {
+                await renderEventsManager();
+            } else if (activeTab === 'attendees') {
+                const attendeeSearch = document.getElementById('attendees-search');
+                if (attendeeSearch) {
+                    attendeeSearch.value = globalSearch;
+                }
+                await renderAttendeesTab();
+            } else if (activeTab === 'dashboard') {
+                await refreshDashboard();
+            }
+        };
+
+        tabDashboardBtn.addEventListener('click', () => switchTab('dashboard'));
+        tabEventsBtn.addEventListener('click', () => switchTab('events'));
+        tabRevenueBtn.addEventListener('click', () => switchTab('revenue'));
+        tabAttendeesBtn.addEventListener('click', () => switchTab('attendees'));
+        tabSettingsBtn.addEventListener('click', () => switchTab('settings'));
+
+        window.quickUpdateStatus = async function(eventId, status) {
+            const eventObj = await VantageDB.getEvent(eventId);
+            if (eventObj) {
+                eventObj.status = status;
+                const success = await VantageDB.saveEventDetails(eventObj);
+                if (success) {
+                    alert(`Event status updated to ${status.toUpperCase()} successfully!`);
+                    await renderEventsManager();
+                    await refreshDashboard();
+                } else {
+                    alert("Failed to update status. Check Admin credentials.");
+                }
+            }
+        };
+
+        async function renderEventsManager() {
+            eventsView.innerHTML = '';
+            const events = await VantageDB.getEvents();
+            const tickets = await VantageDB.getPurchasedTickets();
+            const globalSearchInput = document.getElementById('global-search');
+            const query = globalSearchInput ? globalSearchInput.value.toLowerCase().trim() : '';
+            
+            const filtered = Object.values(events).filter(event => {
+                return !query || 
+                    event.title.toLowerCase().includes(query) || 
+                    event.category.toLowerCase().includes(query) || 
+                    event.location.toLowerCase().includes(query) || 
+                    event.status.toLowerCase().includes(query);
+            });
+            
+            if (filtered.length === 0) {
+                eventsView.innerHTML = `
+                    <div class="col-span-full text-center py-xl space-y-sm">
+                        <span class="material-symbols-outlined text-[64px] text-outline-variant">search_off</span>
+                        <h3 class="font-title-md text-white font-bold">No Events Found</h3>
+                        <p class="text-on-surface-variant text-sm">No events match your search query.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            filtered.forEach(event => {
+                const card = document.createElement('div');
+                card.className = 'glass-card p-md rounded-2xl space-y-sm flex flex-col justify-between';
+                
+                let tiersHTML = '';
+                event.tiers.forEach(tier => {
+                    tiersHTML += `
+                        <div class="flex justify-between items-center text-xs border-b border-outline-variant/20 pb-1">
+                            <span class="text-on-surface-variant font-medium">${tier.name}</span>
+                            <span class="text-white font-bold">₹${tier.price.toLocaleString()} (${tier.qtyLeft} Left)</span>
+                        </div>
+                    `;
+                });
+
+                // Calculate specific event analytics
+                const eventTickets = tickets.filter(t => t.eventId === event.id);
+                const ticketsSold = eventTickets.reduce((sum, t) => sum + t.quantity, 0);
+                const revenue = eventTickets.reduce((sum, t) => sum + t.totalPaid, 0);
+                const checkIns = eventTickets.filter(t => t.status === 'scanned').reduce((sum, t) => sum + t.quantity, 0);
+                
+                // Get last booking time
+                let lastBookingText = "None";
+                if (event.last_booking_time) {
+                    lastBookingText = new Date(event.last_booking_time).toLocaleString();
+                } else if (eventTickets.length > 0) {
+                    const maxDate = new Date(Math.max(...eventTickets.map(t => new Date(t.purchaseDate))));
+                    lastBookingText = maxDate.toLocaleString();
+                }
+
+                card.innerHTML = `
+                    <div class="space-y-sm">
+                        <div class="h-44 rounded-xl overflow-hidden relative">
+                            <img src="${event.image}" class="w-full h-full object-cover" alt="${event.title}" />
+                            <div class="absolute top-sm right-sm flex flex-col items-end gap-xs">
+                                <div class="bg-primary-container text-on-primary-container backdrop-blur-md px-sm py-xs rounded-full text-xs font-bold uppercase">
+                                    ${event.status}
+                                </div>
+                                ${event.is_featured ? '<div class="bg-amber-400 text-black px-sm py-xs rounded-full text-[10px] font-bold uppercase">Featured</div>' : ''}
+                                ${!event.is_public ? '<div class="bg-zinc-700 text-white px-sm py-xs rounded-full text-[10px] font-bold uppercase">Hidden</div>' : ''}
+                                ${event.is_archived ? '<div class="bg-gray-600 text-white px-sm py-xs rounded-full text-[10px] font-bold uppercase">Archived</div>' : ''}
+                            </div>
+                        </div>
+                        <div class="space-y-xs">
+                            <span class="font-label-sm text-primary uppercase">${event.category}</span>
+                            <h3 class="font-title-md text-headline-lg text-white font-bold truncate">${event.title}</h3>
+                            <div class="flex items-center gap-xs text-on-surface-variant font-label-sm text-xs">
+                                <span class="material-symbols-outlined text-[16px]">location_on</span>
+                                <span class="truncate">${event.location}</span>
+                            </div>
+                            <div class="flex items-center gap-xs text-on-surface-variant font-label-sm text-xs">
+                                <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                                <span>${event.date}</span>
+                            </div>
+                            <div class="flex items-center gap-xs text-on-surface-variant font-label-sm text-xs">
+                                <span class="material-symbols-outlined text-[16px]">stadium</span>
+                                <span>Total Capacity: ${event.capacity.toLocaleString()}</span>
+                            </div>
+                        </div>
+
+                        <!-- Ticket tiers -->
+                        <div class="space-y-xs pt-xs border-t border-outline-variant/10">
+                            <h4 class="font-label-sm text-on-surface-variant uppercase font-bold tracking-widest text-[10px]">TICKET CONFIG</h4>
+                            <div class="space-y-1">
+                                ${tiersHTML}
+                            </div>
+                        </div>
+
+                        <!-- Event Analytics -->
+                        <div class="space-y-xs pt-xs border-t border-outline-variant/10">
+                            <h4 class="font-label-sm text-on-surface-variant uppercase font-bold tracking-widest text-[10px]">EVENT ANALYTICS</h4>
+                            <div class="grid grid-cols-2 gap-x-sm gap-y-xs text-[11px] text-on-surface-variant">
+                                <div>Tickets Sold: <span class="text-white font-bold">${ticketsSold}</span></div>
+                                <div>Check-ins: <span class="text-white font-bold">${checkIns}</span></div>
+                                <div>Revenue: <span class="text-white font-bold">₹${revenue.toLocaleString(undefined, {maximumFractionDigits: 0})}</span></div>
+                                <div>Last Booking: <span class="text-white font-bold block truncate text-[9px] mt-0.5">${lastBookingText}</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Controls -->
+                        <div class="space-y-xs pt-xs border-t border-outline-variant/10">
+                            <h4 class="font-label-sm text-on-surface-variant uppercase font-bold tracking-widest text-[10px] mb-1">QUICK ACTIONS</h4>
+                            <div class="grid grid-cols-2 gap-xs text-[9px]">
+                                <button onclick="quickUpdateStatus('${event.id}', 'active')" class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 py-1 rounded font-bold uppercase hover:bg-emerald-500/20 transition-all">Enable Bookings</button>
+                                <button onclick="quickUpdateStatus('${event.id}', 'paused')" class="bg-amber-500/10 text-amber-400 border border-amber-500/20 py-1 rounded font-bold uppercase hover:bg-amber-500/20 transition-all">Pause Bookings</button>
+                                <button onclick="quickUpdateStatus('${event.id}', 'sold_out')" class="bg-red-500/10 text-red-400 border border-red-500/20 py-1 rounded font-bold uppercase hover:bg-red-500/20 transition-all">Mark Sold Out</button>
+                                <button onclick="quickUpdateStatus('${event.id}', 'cancelled')" class="bg-error/10 text-error border border-error/20 py-1 rounded font-bold uppercase hover:bg-error/20 transition-all">Cancel Event</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="openEditModal('${event.id}')" class="w-full mt-md bg-surface-container-high border border-outline-variant hover:bg-white/5 text-white py-2 rounded-lg font-label-sm text-label-sm uppercase tracking-wider transition-colors active:scale-95">
+                        Edit Full Details
+                    </button>
+                `;
+                eventsView.appendChild(card);
+            });
+        }
+
+        let editingEventId = '';
+
+        window.openEditModal = async function(eventId) {
+            editingEventId = eventId;
+            const eventObj = await VantageDB.getEvent(eventId);
+            
+            document.getElementById('edit-event-id').value = eventId;
+            document.getElementById('edit-title').value = eventObj.title;
+            document.getElementById('edit-category').value = eventObj.category;
+            document.getElementById('edit-date').value = eventObj.date;
+            document.getElementById('edit-location').value = eventObj.location;
+            document.getElementById('edit-capacity').value = eventObj.capacity;
+            document.getElementById('edit-doors').value = eventObj.doors;
+            document.getElementById('edit-age').value = eventObj.ageLimit || eventObj.age_limit || 'All Ages';
+            document.getElementById('edit-status').value = eventObj.status;
+            document.getElementById('edit-image').value = eventObj.image;
+
+            // Visibility checkboxes
+            document.getElementById('edit-is-public').checked = eventObj.is_public !== undefined ? eventObj.is_public : true;
+            document.getElementById('edit-is-featured').checked = eventObj.is_featured !== undefined ? eventObj.is_featured : false;
+            document.getElementById('edit-is-archived').checked = eventObj.is_archived !== undefined ? eventObj.is_archived : false;
+
+            // Booking windows
+            const formatForInput = (isoString) => {
+                if (!isoString) return '';
+                const d = new Date(isoString);
+                const tzOffset = d.getTimezoneOffset() * 60000;
+                const localISOTime = (new Date(d.getTime() - tzOffset)).toISOString().slice(0, 16);
+                return localISOTime;
+            };
+            document.getElementById('edit-booking-start').value = formatForInput(eventObj.booking_start);
+            document.getElementById('edit-booking-end').value = formatForInput(eventObj.booking_end);
+
+            const tiersContainer = document.getElementById('edit-tiers-container');
+            tiersContainer.innerHTML = '';
+            
+            eventObj.tiers.forEach((tier, index) => {
+                const tierDiv = document.createElement('div');
+                tierDiv.className = 'p-sm bg-surface-container rounded-lg border border-outline-variant/30 grid grid-cols-1 md:grid-cols-3 gap-sm items-end text-left';
+                tierDiv.innerHTML = `
+                    <div class="flex flex-col gap-xs md:col-span-1">
+                        <label class="font-label-sm text-[10px] text-on-surface-variant">TIER NAME</label>
+                        <input class="w-full bg-surface-container-highest border border-outline-variant rounded px-2 py-1 font-body-md text-on-surface text-sm" id="tier-name-${index}" value="${tier.name}" disabled type="text"/>
+                    </div>
+                    <div class="flex flex-col gap-xs">
+                        <label class="font-label-sm text-[10px] text-on-surface-variant">PRICE (₹)</label>
+                        <input class="w-full bg-surface-container-highest border border-outline-variant rounded px-2 py-1 font-body-md text-on-surface text-sm" id="tier-price-${index}" value="${tier.price}" required type="number" min="0"/>
+                    </div>
+                    <div class="flex flex-col gap-xs">
+                        <label class="font-label-sm text-[10px] text-on-surface-variant">QUANTITY LEFT</label>
+                        <input class="w-full bg-surface-container-highest border border-outline-variant rounded px-2 py-1 font-body-md text-on-surface text-sm" id="tier-qty-${index}" value="${tier.qtyLeft}" required type="number" min="0"/>
+                    </div>
+                `;
+                tiersContainer.appendChild(tierDiv);
+            });
+
+            document.getElementById('edit-event-modal').classList.remove('hidden');
+        }
+
+        window.closeEditModal = function() {
+            document.getElementById('edit-event-modal').classList.add('hidden');
+        }
+
+        window.saveEventChanges = async function(e) {
+            e.preventDefault();
+            const eventObj = await VantageDB.getEvent(editingEventId);
+            
+            eventObj.title = document.getElementById('edit-title').value;
+            eventObj.category = document.getElementById('edit-category').value;
+            eventObj.date = document.getElementById('edit-date').value;
+            eventObj.location = document.getElementById('edit-location').value;
+            eventObj.capacity = parseInt(document.getElementById('edit-capacity').value);
+            eventObj.doors = document.getElementById('edit-doors').value;
+            eventObj.ageLimit = document.getElementById('edit-age').value;
+            eventObj.status = document.getElementById('edit-status').value;
+            eventObj.image = document.getElementById('edit-image').value;
+
+            // Visibility properties
+            eventObj.is_public = document.getElementById('edit-is-public').checked;
+            eventObj.is_featured = document.getElementById('edit-is-featured').checked;
+            eventObj.is_archived = document.getElementById('edit-is-archived').checked;
+
+            // Booking windows
+            const startVal = document.getElementById('edit-booking-start').value;
+            const endVal = document.getElementById('edit-booking-end').value;
+            eventObj.booking_start = startVal ? new Date(startVal).toISOString() : null;
+            eventObj.booking_end = endVal ? new Date(endVal).toISOString() : null;
+
+            eventObj.tiers.forEach((tier, index) => {
+                tier.price = parseFloat(document.getElementById(`tier-price-${index}`).value);
+                tier.qtyLeft = parseInt(document.getElementById(`tier-qty-${index}`).value);
+            });
+
+            const success = await VantageDB.saveEventDetails(eventObj);
+            if (success) {
+                closeEditModal();
+                await renderEventsManager();
+                await refreshDashboard();
+            } else {
+                alert("Failed to save changes. Make sure you are authenticated as Admin.");
+            }
+        }
+
+        async function refreshDashboard() {
+            const metrics = await VantageDB.getMetrics();
+            document.getElementById('stat-revenue').innerText = `₹${metrics.totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('stat-sold').innerText = metrics.ticketsSold.toLocaleString();
+            document.getElementById('stat-attendance').innerText = `${metrics.attendancePercent}%`;
+            
+            const pct = Math.min(100, Math.round(metrics.ticketsSold / 50000 * 100));
+            const soldCard = document.getElementById('stat-sold').closest('.glass-card');
+            const pctText = soldCard.querySelector('p.text-on-surface-variant');
+            if (pctText) pctText.innerText = `Capacity: ${pct}%`;
+            const progress = soldCard.querySelector('.bg-primary');
+            if (progress) progress.style.width = `${pct}%`;
+
+            const bookingsTbody = document.getElementById('bookings-tbody');
+            bookingsTbody.innerHTML = '';
+            
+            const globalSearchInput = document.getElementById('global-search');
+            const query = globalSearchInput ? globalSearchInput.value.toLowerCase().trim() : '';
+            
+            const tickets = await VantageDB.getPurchasedTickets();
+            const filteredTickets = tickets.filter(ticket => {
+                return !query || 
+                    ticket.attendeeName.toLowerCase().includes(query) || 
+                    ticket.attendeeEmail.toLowerCase().includes(query) || 
+                    ticket.eventName.toLowerCase().includes(query) || 
+                    ticket.id.toLowerCase().includes(query);
+            });
+            
+            if (filteredTickets.length === 0) {
+                bookingsTbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="px-6 py-8 text-center text-on-surface-variant font-body-md">
+                            No bookings match the criteria.
+                        </td>
+                    </tr>
+                `;
+            } else {
+                filteredTickets.forEach(ticket => {
+                    const initials = ticket.attendeeName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                    const statusBadge = ticket.status === 'scanned' ? 
+                        `<span class="px-3 py-1 rounded-full bg-emerald-400/10 text-emerald-400 font-label-sm text-[10px]">Scanned</span>` :
+                        `<span class="px-3 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-[10px]">Valid</span>`;
+
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-surface-variant/30 transition-colors cursor-pointer';
+                    tr.innerHTML = `
+                        <td class="px-6 py-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">${initials}</div>
+                                <div>
+                                    <p class="font-body-md text-on-surface text-sm font-semibold">${ticket.attendeeName}</p>
+                                    <p class="text-[11px] text-on-surface-variant">${ticket.attendeeEmail}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 font-body-md text-sm text-on-surface-variant">${ticket.eventName} (${ticket.tierName})</td>
+                        <td class="px-6 py-4 font-body-md text-sm text-on-surface font-semibold">₹${ticket.totalPaid.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td class="px-6 py-4">${statusBadge}</td>
+                    `;
+                    bookingsTbody.appendChild(tr);
+                });
+            }
+
+            // Render SVG Trend Graph
+            renderBookingTrend(tickets);
+
+            const scansFeed = document.getElementById('live-scans-feed');
+            scansFeed.innerHTML = '';
+
+            const logs = await VantageDB.getLogs();
+            if (logs.length === 0) {
+                scansFeed.innerHTML = '<div class="text-center py-8 text-on-surface-variant/50 font-label-sm">No activity logs recorded.</div>';
+            } else {
+                logs.forEach(log => {
+                    const time = new Date(log.timestamp).toLocaleTimeString();
+                    const item = document.createElement('div');
+                    
+                    if (log.type === 'success') {
+                        item.className = 'p-3 bg-surface-container-high rounded-lg flex items-center justify-between group border border-emerald-500/10';
+                        item.innerHTML = `
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-lg overflow-hidden border border-outline-variant bg-surface-dim flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-emerald-400">check_circle</span>
+                                </div>
+                                <div>
+                                    <p class="font-label-sm text-on-surface font-bold">${log.gate}</p>
+                                    <p class="text-[11px] text-on-surface-variant">Ticket Verified: ${log.attendeeName} (${log.ticketId})</p>
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-on-surface-variant font-mono">${time}</p>
+                        `;
+                    } else {
+                        item.className = 'p-3 bg-error-container/20 border border-error/20 rounded-lg flex items-center justify-between';
+                        item.innerHTML = `
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-lg overflow-hidden border border-error/30 bg-surface-dim flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-error">error</span>
+                                </div>
+                                <div>
+                                    <p class="font-label-sm text-error font-bold">${log.message} - ${log.gate}</p>
+                                    <p class="text-[11px] text-on-surface-variant">ID: ${log.ticketId}</p>
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-on-surface-variant font-mono">${time}</p>
+                        `;
+                    }
+                    scansFeed.appendChild(item);
+                });
+                
+                const btnContainer = document.createElement('div');
+                btnContainer.className = 'text-center py-2';
+                btnContainer.innerHTML = '<button onclick="clearActivityLogs()" class="text-error font-label-sm text-[11px] hover:underline uppercase tracking-wider">Clear Activity Log</button>';
+                scansFeed.appendChild(btnContainer);
+            }
+        }
+
+        window.clearActivityLogs = async function() {
+            if (confirm('Are you sure you want to clear the check-in activity logs?')) {
+                const supabase = VantageDB.getSupabaseClient();
+                const { error } = await supabase.from('logs').delete().neq('type', '');
+                if (error) {
+                    console.error("Error clearing logs:", error);
+                    alert("Failed to clear activity logs.");
+                } else {
+                    await refreshDashboard();
+                }
+            }
+        };
+
+        // SVG Sparkline booking trend renderer
+        function renderBookingTrend(tickets) {
+            const container = document.getElementById('trend-sparkline-container');
+            if (!container) return;
+
+            // Generate list of the last 7 days (YYYY-MM-DD)
+            const days = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                days.push({
+                    dateString: d.toISOString().split('T')[0],
+                    label: d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+                });
+            }
+
+            // Map each day to the sum of ticket quantities purchased on that day
+            const dailyCounts = days.map(day => {
+                const count = tickets.filter(t => {
+                    const tDate = new Date(t.purchaseDate).toISOString().split('T')[0];
+                    return tDate === day.dateString;
+                }).reduce((sum, t) => sum + t.quantity, 0);
+                return {
+                    label: day.label,
+                    count: count
+                };
+            });
+
+            const counts = dailyCounts.map(d => d.count);
+            const maxVal = Math.max(...counts, 1); // Avoid dividing by zero if max is 0
+            
+            // Peak label update
+            const trendPeak = document.getElementById('trend-peak');
+            if (trendPeak) {
+                trendPeak.innerText = `Peak: ${Math.max(...counts)} bookings/day`;
+            }
+
+            // Draw SVG
+            const width = container.clientWidth || 600;
+            const height = container.clientHeight || 112;
+            const padding = 16;
+            const chartWidth = width - padding * 2;
+            const chartHeight = height - padding * 2;
+
+            // Generate points
+            const points = dailyCounts.map((d, index) => {
+                const x = padding + (index / 6) * chartWidth;
+                const y = padding + chartHeight - (d.count / maxVal) * chartHeight;
+                return { x, y, label: d.label, count: d.count };
+            });
+
+            // Path generator
+            let pathD = `M ${points[0].x} ${points[0].y}`;
+            for (let i = 1; i < points.length; i++) {
+                pathD += ` L ${points[i].x} ${points[i].y}`;
+            }
+
+            // Gradient fill path (close the path to the bottom)
+            const fillD = `${pathD} L ${points[points.length - 1].x} ${padding + chartHeight} L ${points[0].x} ${padding + chartHeight} Z`;
+
+            // Render SVG structure
+            let svgHTML = `
+                <svg width="100%" height="100%" viewBox="0 0 ${width} ${height}" class="overflow-visible">
+                    <defs>
+                        <linearGradient id="sparkline-grad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#ff535b" stop-opacity="0.4" />
+                            <stop offset="100%" stop-color="#ff535b" stop-opacity="0.0" />
+                        </linearGradient>
+                    </defs>
+                    
+                    <!-- Background Grid lines (horizontal) -->
+                    <line x1="${padding}" y1="${padding}" x2="${width - padding}" y2="${padding}" stroke="rgba(255,255,255,0.05)" stroke-width="1" stroke-dasharray="4" />
+                    <line x1="${padding}" y1="${padding + chartHeight / 2}" x2="${width - padding}" y2="${padding + chartHeight / 2}" stroke="rgba(255,255,255,0.05)" stroke-width="1" stroke-dasharray="4" />
+                    <line x1="${padding}" y1="${padding + chartHeight}" x2="${width - padding}" y2="${padding + chartHeight}" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+
+                    <!-- Filled area under the line -->
+                    <path d="${fillD}" fill="url(#sparkline-grad)" />
+                    
+                    <!-- Sparkline Path -->
+                    <path d="${pathD}" fill="none" stroke="#ff535b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                    
+                    <!-- Interactive points & Tooltip labels -->
+                    <g class="interactive-points">
+            `;
+
+            points.forEach((p, i) => {
+                svgHTML += `
+                    <g class="group/point cursor-pointer">
+                        <!-- Invisible larger circle for hover target -->
+                        <circle cx="${p.x}" cy="${p.y}" r="8" fill="transparent" />
+                        <!-- Visible small point dot -->
+                        <circle cx="${p.x}" cy="${p.y}" r="4" fill="#ffffff" stroke="#ff535b" stroke-width="2" class="transition-all duration-200 group-hover/point:r-5 group-hover/point:fill-primary-container" />
+                        
+                        <!-- Tooltip popup on hover -->
+                        <g class="opacity-0 group-hover/point:opacity-100 transition-opacity duration-200 pointer-events-none">
+                            <rect x="${p.x - 45}" y="${Math.max(2, p.y - 32)}" width="90" height="24" rx="4" fill="#1d2021" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+                            <text x="${p.x}" y="${Math.max(2, p.y - 32) + 15}" fill="#ffffff" font-size="10" font-family="Inter" text-anchor="middle" font-weight="bold">
+                                ${p.count} (${p.label})
+                            </text>
+                        </g>
+                    </g>
+                `;
+            });
+
+            // Add X axis labels at the bottom
+            svgHTML += `
+                    </g>
+                    <!-- X Axis Labels -->
+                    <g fill="rgba(225, 227, 228, 0.4)" font-size="9" font-family="Geist" text-anchor="middle">
+                        <text x="${points[0].x}" y="${height - 2}">${points[0].label}</text>
+                        <text x="${points[3].x}" y="${height - 2}">${points[3].label}</text>
+                        <text x="${points[6].x}" y="${height - 2}">${points[6].label}</text>
+                    </g>
+                </svg>
+            `;
+
+            container.innerHTML = svgHTML;
+        }
+
+        // ==========================================
+        // REVENUE TAB FUNCTIONALITY
+        // ==========================================
+        async function renderRevenueTab() {
+            const tickets = await VantageDB.getPurchasedTickets();
+            
+            const baseRevenue = 0.00;
+            const baseNet = baseRevenue / 1.08;
+            const baseFees = baseRevenue - baseNet;
+            
+            const currentGross = tickets.reduce((sum, t) => sum + t.totalPaid, 0);
+            const currentFees = tickets.reduce((sum, t) => sum + (t.totalPaid - (t.totalPaid / 1.08)), 0);
+            const currentNet = currentGross - currentFees;
+            
+            const totalGross = baseRevenue + currentGross;
+            const totalNet = baseNet + currentNet;
+            const totalFees = baseFees + currentFees;
+            
+            document.getElementById('revenue-gross').innerText = `₹${totalGross.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('revenue-net').innerText = `₹${totalNet.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('revenue-fees').innerText = `₹${totalFees.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            
+            const tbody = document.getElementById('revenue-tbody');
+            tbody.innerHTML = '';
+            
+            if (tickets.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-8 text-center text-on-surface-variant font-body-md">
+                            No transactions recorded in this session.
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tickets.forEach(t => {
+                    const baseFare = t.totalPaid / 1.08;
+                    const fee = t.totalPaid - baseFare;
+                    
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-surface-variant/30 border-b border-outline-variant/10';
+                    tr.innerHTML = `
+                        <td class="px-6 py-4 font-mono font-medium text-xs text-primary">${t.id}</td>
+                        <td class="px-6 py-4">
+                            <p class="font-bold text-white">${t.attendeeName}</p>
+                            <p class="text-xs text-on-surface-variant">${t.attendeeEmail}</p>
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="text-white font-medium">${t.eventName}</p>
+                            <p class="text-xs text-on-surface-variant">${t.tierName}</p>
+                        </td>
+                        <td class="px-6 py-4 text-right text-on-surface-variant">₹${baseFare.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td class="px-6 py-4 text-right text-indigo-400">₹${fee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td class="px-6 py-4 text-right text-emerald-400 font-bold">₹${t.totalPaid.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+        
+        window.exportRevenueCSV = async function() {
+            const tickets = await VantageDB.getPurchasedTickets();
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Transaction ID,Attendee Name,Attendee Email,Event Name,Ticket Tier,Base Fare,Platform Fee,Total Paid,Purchase Date\n";
+            
+            tickets.forEach(t => {
+                const baseFare = t.totalPaid / 1.08;
+                const fee = t.totalPaid - baseFare;
+                csvContent += `"${t.id}","${t.attendeeName}","${t.attendeeEmail}","${t.eventName}","${t.tierName}",${baseFare.toFixed(2)},${fee.toFixed(2)},${t.totalPaid.toFixed(2)},"${t.purchaseDate}"\n`;
+            });
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Vantage_Revenue_Report_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        // ==========================================
+        // ATTENDEES TAB FUNCTIONALITY
+        // ==========================================
+        let attendeeFilter = 'all';
+
+        window.setAttendeeFilter = async function(filter) {
+            attendeeFilter = filter;
+            
+            const btnAll = document.getElementById('btn-filter-all');
+            const btnScanned = document.getElementById('btn-filter-scanned');
+            const btnValid = document.getElementById('btn-filter-valid');
+            
+            const activeClasses = ['bg-primary-container', 'text-on-primary-container', 'font-bold'];
+            const inactiveClasses = ['text-on-surface-variant'];
+            
+            [btnAll, btnScanned, btnValid].forEach(b => {
+                activeClasses.forEach(c => b.classList.remove(c));
+                inactiveClasses.forEach(c => b.classList.add(c));
+            });
+            
+            const activeBtn = document.getElementById(`btn-filter-${filter}`);
+            inactiveClasses.forEach(c => activeBtn.classList.remove(c));
+            activeClasses.forEach(c => activeBtn.classList.add(c));
+            
+            await renderAttendeesTab();
+        };
+
+        window.filterAttendeesList = async function() {
+            await renderAttendeesTab();
+        };
+
+        async function renderAttendeesTab() {
+            const tickets = await VantageDB.getPurchasedTickets();
+            const searchQuery = document.getElementById('attendees-search').value.toLowerCase().trim();
+            const tbody = document.getElementById('attendees-tbody');
+            tbody.innerHTML = '';
+            
+            const filtered = tickets.filter(t => {
+                if (attendeeFilter !== 'all' && t.status !== attendeeFilter) return false;
+                
+                if (searchQuery) {
+                    const matchName = t.attendeeName.toLowerCase().includes(searchQuery);
+                    const matchEmail = t.attendeeEmail.toLowerCase().includes(searchQuery);
+                    const matchId = t.id.toLowerCase().includes(searchQuery);
+                    if (!matchName && !matchEmail && !matchId) return false;
+                }
+                return true;
+            });
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-8 text-center text-on-surface-variant font-body-md">
+                            No attendees match the criteria.
+                        </td>
+                    </tr>
+                `;
+            } else {
+                filtered.forEach(t => {
+                    const statusBadge = t.status === 'scanned' ? 
+                        `<span class="px-3 py-1 rounded-full bg-emerald-400/10 text-emerald-400 font-label-sm text-[10px] font-bold">Checked In</span>` :
+                        `<span class="px-3 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-[10px] font-bold">Pending</span>`;
+                        
+                    const checkinDetails = t.status === 'scanned' ? 
+                        `<p class="text-white font-medium text-xs">${t.scanGate}</p><p class="text-[10px] text-on-surface-variant">${new Date(t.scanTime).toLocaleTimeString()}</p>` : 
+                        `<span class="text-on-surface-variant/40">—</span>`;
+                        
+                    const initials = t.attendeeName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                    
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-surface-variant/30 border-b border-outline-variant/10';
+                    tr.innerHTML = `
+                        <td class="px-6 py-4 flex items-center gap-sm">
+                            <div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-primary font-bold text-xs">
+                                ${initials}
+                            </div>
+                            <div>
+                                <p class="font-bold text-white">${t.attendeeName}</p>
+                                <p class="text-xs text-on-surface-variant">${t.attendeeEmail}</p>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 font-mono font-medium text-xs text-primary">${t.id}</td>
+                        <td class="px-6 py-4">
+                            <p class="text-white font-medium">${t.eventName}</p>
+                            <p class="text-xs text-on-surface-variant">${t.tierName}</p>
+                        </td>
+                        <td class="px-6 py-4 text-center font-bold text-white">${t.quantity}</td>
+                        <td class="px-6 py-4">${statusBadge}</td>
+                        <td class="px-6 py-4">${checkinDetails}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        // ==========================================
+        // SETTINGS TAB FUNCTIONALITY
+        // ==========================================
+        async function renderSettingsTab() {
+            const supabase = VantageDB.getSupabaseClient();
+            const { data, error } = await supabase
+                .from('vantage_settings')
+                .select('*');
+            
+            let adminPwd = 'JgiSnpsu';
+            let scannerPwd = 'YashbotJgi';
+            if (!error && data) {
+                const adminSetting = data.find(s => s.key === 'admin_password');
+                const scannerSetting = data.find(s => s.key === 'scanner_password');
+                if (adminSetting) adminPwd = adminSetting.value;
+                if (scannerSetting) scannerPwd = scannerSetting.value;
+            }
+            
+            const googleClientId = localStorage.getItem('vantage_google_client_id') || '';
+            
+            document.getElementById('settings-admin-pwd').value = adminPwd;
+            document.getElementById('settings-scanner-pwd').value = scannerPwd;
+            document.getElementById('settings-google-client-id').value = googleClientId;
+        }
+
+        window.savePortalPasswords = async function(e) {
+            e.preventDefault();
+            const adminPwd = document.getElementById('settings-admin-pwd').value;
+            const scannerPwd = document.getElementById('settings-scanner-pwd').value;
+            const googleClientId = document.getElementById('settings-google-client-id').value;
+            
+            // First update Supabase settings table
+            const supabase = VantageDB.getSupabaseClient();
+            const { error: errAdmin } = await supabase
+                .from('vantage_settings')
+                .update({ value: adminPwd })
+                .eq('key', 'admin_password');
+                
+            const { error: errScanner } = await supabase
+                .from('vantage_settings')
+                .update({ value: scannerPwd })
+                .eq('key', 'scanner_password');
+                
+            if (errAdmin || errScanner) {
+                console.error("Failed to update passwords in database:", errAdmin || errScanner);
+                alert("Failed to update security credentials in the database. Ensure you are authorized.");
+                return;
+            }
+            
+            localStorage.setItem('vantage_admin_password', adminPwd);
+            localStorage.setItem('vantage_scanner_password', scannerPwd);
+            localStorage.setItem('vantage_google_client_id', googleClientId);
+            
+            alert('Security access passwords and Google OAuth settings updated successfully!');
+            await renderSettingsTab();
+        };
+
+        window.resetSystemDB = async function() {
+            if (confirm('CAUTION: Are you sure you want to clear all tickets and reset the database? This action cannot be undone.')) {
+                // Clear local storage overrides
+                localStorage.removeItem('vantage_admin_password');
+                localStorage.removeItem('vantage_scanner_password');
+                
+                // Reset Supabase
+                const success = await VantageDB.resetDatabase();
+                if (success) {
+                    alert('Database successfully restored to seed defaults!');
+                    window.location.reload();
+                } else {
+                    alert('Failed to reset database. Check Admin credentials.');
+                }
+            }
+        };
+
+        window.addEventListener('storage', async () => {
+            if (activeTab === 'dashboard') {
+                await refreshDashboard();
+            } else if (activeTab === 'events') {
+                await renderEventsManager();
+            } else if (activeTab === 'revenue') {
+                await renderRevenueTab();
+            } else if (activeTab === 'attendees') {
+                await renderAttendeesTab();
+            }
+        });
+
+        // Realtime Subscription Setup
+        function setupRealtime() {
+            const supabase = VantageDB.getSupabaseClient();
+            
+            // Subscribe to tickets table changes (new purchases or scans)
+            supabase.channel('admin-tickets-channel')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'tickets' }, async () => {
+                    console.log("Realtime ticket update received.");
+                    if (activeTab === 'dashboard') {
+                        await refreshDashboard();
+                    } else if (activeTab === 'revenue') {
+                        await renderRevenueTab();
+                    } else if (activeTab === 'attendees') {
+                        await renderAttendeesTab();
+                    } else if (activeTab === 'events') {
+                        await renderEventsManager();
+                    }
+                })
+                .subscribe();
+
+            // Subscribe to events table changes
+            supabase.channel('admin-events-channel')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'events' }, async () => {
+                    console.log("Realtime event update received.");
+                    if (activeTab === 'events') {
+                        await renderEventsManager();
+                    } else if (activeTab === 'dashboard') {
+                        await refreshDashboard();
+                    }
+                })
+                .subscribe();
+
+            // Subscribe to logs table changes
+            supabase.channel('admin-logs-channel')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'logs' }, async () => {
+                    console.log("Realtime log update received.");
+                    if (activeTab === 'dashboard') {
+                        await refreshDashboard();
+                    }
+                })
+                .subscribe();
+        }
+
+        // Security Gate Validation
+        (function() {
+            const auth = sessionStorage.getItem('vantage_admin_authenticated');
+            const loginScreen = document.getElementById('admin-login-screen');
+            const content = document.getElementById('admin-dashboard-content');
+            
+            if (auth === 'true') {
+                loginScreen.classList.add('hidden');
+                content.classList.remove('hidden');
+                setupRealtime();
+                
+                // Route to correct tab
+                const urlParams = new URLSearchParams(window.location.search);
+                const tabParam = urlParams.get('tab');
+                switchTab(tabParam || 'dashboard');
+            } else {
+                loginScreen.classList.remove('hidden');
+                content.classList.add('hidden');
+            }
+            
+            const form = document.getElementById('admin-login-form');
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const pwd = document.getElementById('admin-password').value;
+                    
+                    // Verify password with Supabase setting
+                    const supabase = VantageDB.getSupabaseClient();
+                    const { data, error } = await supabase
+                        .from('vantage_settings')
+                        .select('value')
+                        .eq('key', 'admin_password')
+                        .maybeSingle();
+                        
+                    const savedPwd = (!error && data) ? data.value : 'JgiSnpsu';
+                    
+                    if (pwd === savedPwd) {
+                        localStorage.setItem('vantage_admin_password', pwd);
+                        sessionStorage.setItem('vantage_admin_authenticated', 'true');
+                        loginScreen.classList.add('hidden');
+                        content.classList.remove('hidden');
+                        
+                        setupRealtime();
+                        
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const tabParam = urlParams.get('tab');
+                        await switchTab(tabParam || 'dashboard');
+                    } else {
+                        const errorMsg = document.getElementById('admin-error-msg');
+                        errorMsg.classList.remove('hidden');
+                        document.getElementById('admin-password').value = '';
+                    }
+                });
+            }
+            
+            window.logoutAdmin = function(e) {
+                e.preventDefault();
+                sessionStorage.removeItem('vantage_admin_authenticated');
+                window.location.reload();
+            };
+        })();
+    </script>
+</body></html>

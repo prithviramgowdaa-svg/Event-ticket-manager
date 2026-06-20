@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VANTAGE | Event Details</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="db.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#303032",
+                        "primary-fixed": "#ffdad8",
+                        "secondary-fixed": "#e4e2e4",
+                        "background": "#111415",
+                        "error-container": "#93000a",
+                        "surface-container-lowest": "#0c0f10",
+                        "primary-container": "#ff535b",
+                        "on-secondary-fixed": "#1b1b1d",
+                        "on-surface": "#e1e3e4",
+                        "tertiary-fixed-dim": "#c8c6c9",
+                        "inverse-on-surface": "#2e3132",
+                        "surface-variant": "#323536",
+                        "surface-container": "#1d2021",
+                        "secondary-container": "#474649",
+                        "on-primary-fixed": "#410007",
+                        "on-error": "#690005",
+                        "tertiary-fixed": "#e4e2e5",
+                        "tertiary-container": "#919094",
+                        "outline-variant": "#5b403f",
+                        "primary": "#ffb3b1",
+                        "surface-bright": "#373a3b",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "on-primary-container": "#5b000e",
+                        "inverse-primary": "#bb152c",
+                        "outline": "#ab8987",
+                        "on-background": "#e1e3e4",
+                        "surface-tint": "#ffb3b1",
+                        "on-tertiary-fixed": "#1b1b1e",
+                        "surface-dim": "#111415",
+                        "on-secondary-container": "#b7b4b7",
+                        "on-primary": "#680011",
+                        "on-tertiary": "#303033",
+                        "secondary": "#c8c6c8",
+                        "surface-container-highest": "#323536",
+                        "surface-container-high": "#282a2b",
+                        "inverse-surface": "#e1e3e4",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed-dim": "#ffb3b1",
+                        "on-tertiary-container": "#29292c",
+                        "surface": "#111415",
+                        "on-secondary-fixed-variant": "#474649",
+                        "error": "#ffb4ab",
+                        "surface-container-low": "#191c1d",
+                        "on-primary-fixed-variant": "#92001c",
+                        "on-tertiary-fixed-variant": "#47464a",
+                        "on-surface-variant": "#e4bebc",
+                        "tertiary": "#c8c6c9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "md": "24px",
+                        "sm": "12px",
+                        "lg": "48px",
+                        "margin-desktop": "64px",
+                        "xs": "4px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "xl": "80px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Geist"],
+                        "headline-lg": ["Geist"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Geist"],
+                        "display-lg": ["Geist"],
+                        "title-md": ["Geist"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                        "title-md": ["20px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(26, 26, 28, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .crimson-glow {
+            box-shadow: 0px 8px 24px rgba(230, 57, 70, 0.2);
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #ffb3b1 0%, #ff535b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .ticket-divider {
+            border-top: 2px dashed rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        .ticket-divider::before, .ticket-divider::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            width: 20px;
+            height: 20px;
+            background: #111415;
+            border-radius: 50%;
+        }
+        .ticket-divider::before { left: -30px; }
+        .ticket-divider::after { right: -30px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-white/10 shadow-md shadow-primary/20">
+<div class="flex justify-between items-center px-margin-desktop py-4 max-w-[1440px] mx-auto">
+<div class="flex items-center gap-md">
+<span class="font-display-lg text-display-lg tracking-tighter text-primary-container"><a href="/">VANTAGE</a></span>
+<div class="hidden md:flex gap-sm items-center ml-lg">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-body-md text-body-md" href="/">Events</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 font-body-md text-body-md px-4" href="/admin">Admin Portal</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 font-body-md text-body-md px-4" href="/scanner">Staff Scanner</a>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<div id="auth-btn-container">
+<button onclick="openAuthModal()" class="bg-primary-container text-on-primary-container px-6 py-2 rounded-full font-bold active:scale-95 transition-transform">Sign In</button>
+</div>
+</div>
+</div>
+</nav>
+<main class="pt-32 pb-xl px-margin-mobile md:px-margin-desktop max-w-[1440px] mx-auto">
+<!-- Hero Section / Header -->
+<div class="relative w-full aspect-[21/9] rounded-xl overflow-hidden mb-lg group">
+<img alt="Event Main Header" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A wide cinematic shot of a high-energy music festival at night with a massive stage illuminated by vibrant crimson and deep red lasers cutting through a misty atmosphere. The crowd is a sea of silhouettes with their hands raised in excitement. The overall mood is electric and exclusive, utilizing a dark atmospheric palette with high-contrast light bursts." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGPVZLaK26vv38jRe6dDqeuCcXwsy6hVL7lsY_7QGuwc50C38UProzjKe5GZjIGfOyC0--n8n33YC_YRy2WJ5uVy1Rq8BS7-M2C6rkAsfTHxZDbPfinOprE9vrC2VbqrdRPE4ILwNpiW0NhiIOiTS0brlwoY1R4PUepVyTU_6WflAYwDANqF5qu-nV1eVVvlNDQVINo_n2uBZjWJKBpL4io4m98HVsA-jyccbLChJmolHuZn2iDGuLIf51JoXDw9lOoxGqWDTvpsFt"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent"></div>
+<div class="absolute bottom-md left-md right-md">
+<div class="flex flex-col md:flex-row justify-between items-end gap-md">
+<div>
+<span class="bg-primary-container/20 text-primary px-3 py-1 rounded-full font-label-sm text-label-sm border border-primary-container/30 mb-sm inline-block">MUSIC FESTIVAL</span>
+<h1 class="font-display-lg text-display-lg text-white mb-xs">NEON VELOCITY 2024</h1>
+<div class="flex flex-wrap gap-md text-on-surface-variant">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary" data-icon="calendar_today">calendar_today</span>
+<span class="font-body-md text-body-md">OCTOBER 24-26, 2024</span>
+</div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary" data-icon="location_on">location_on</span>
+<span class="font-body-md text-body-md">THE SPHERE, LAS VEGAS</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Column: Description & Lineup -->
+<div class="lg:col-span-8 space-y-lg">
+<section class="glass-card p-md rounded-xl">
+<h2 class="font-headline-lg text-headline-lg mb-sm text-white">Event Details</h2>
+<p class="text-on-surface-variant font-body-lg text-body-lg leading-relaxed mb-md">
+                        Experience the zenith of electronic soundscapes at Neon Velocity 2024. This year, we're transforming The Sphere into a multidimensional sensory arena. Featuring a curated lineup of global pioneers and emerging visionaries, this 3-day immersive journey blends cutting-edge audio engineering with revolutionary visual installations.
+                    </p>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-sm">
+<div class="p-sm bg-surface-container rounded-lg border border-outline-variant/30 text-center">
+<span class="material-symbols-outlined text-primary block mb-xs" data-icon="stadium">stadium</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">SEATS LEFT</span>
+<span class="block font-title-md text-title-md text-white">18,000</span>
+</div>
+<div class="p-sm bg-surface-container rounded-lg border border-outline-variant/30 text-center">
+<span class="material-symbols-outlined text-primary block mb-xs" data-icon="schedule">schedule</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">DOORS OPEN</span>
+<span class="block font-title-md text-title-md text-white">6:00 PM</span>
+</div>
+<div class="p-sm bg-surface-container rounded-lg border border-outline-variant/30 text-center">
+<span class="material-symbols-outlined text-primary block mb-xs" data-icon="age_checklist">checklist</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">AGE LIMIT</span>
+<span class="block font-title-md text-title-md text-white">21+</span>
+</div>
+<div class="p-sm bg-surface-container rounded-lg border border-outline-variant/30 text-center">
+<span class="material-symbols-outlined text-primary block mb-xs" data-icon="confirmation_number">confirmation_number</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">STATUS</span>
+<span class="block font-title-md text-title-md text-emerald-400">SELLING FAST</span>
+</div>
+</div>
+</section>
+<section id="lineup-section">
+<h2 id="lineup-title" class="font-headline-lg text-headline-lg mb-md text-white px-xs">Featured Lineup</h2>
+<div id="lineup-container" class="grid grid-cols-1 md:grid-cols-3 gap-base">
+<div class="relative h-64 rounded-xl overflow-hidden group">
+<img alt="Artist 1" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="A close-up artistic portrait of a DJ performing behind illuminated decks in a dark, atmospheric nightclub. Red ambient light catches the edges of the person's silhouette, while the foreground shows intricate hardware details with glowing LEDs. The style is modern, cinematic, and professional with deep blacks and rich crimson accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFv5oL-d7mDt5h9WtWJwMnPSCYneVk6Zg2aHR_oOnWxrSLBXC2CtwU4tJxsbYkNzcis6IEj5s_BO8k56kiV2JRY3-Iz8Jl3Vfzv7p0SzIoePaMbRolwZHH-349I0R63zNaBhcUtoWAZeXhry7tU9eOHbIce93NI81XNbZ5NK6T60ttD3PTO4SUm8NRgU9EbKicALpTGr8zctnY06CCdYpU9Sm9BGZqR-J3xNL-Cey4oLxiNaMftQ325xO_2JOvfqytfkfflwaxW2eI"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-80"></div>
+<div class="absolute bottom-sm left-sm">
+<span class="font-title-md text-title-md text-white">SYNTH WAVE</span>
+<span class="block font-label-sm text-label-sm text-primary">HEADLINER</span>
+</div>
+</div>
+<div class="relative h-64 rounded-xl overflow-hidden group">
+<img alt="Artist 2" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="A dynamic shot of a live performer on stage surrounded by complex visual screens displaying abstract geometric patterns in red and white. The performer is a small but powerful figure in the center of the frame, bathed in dramatic stage lighting. The aesthetic is high-tech, futuristic, and premium corporate music festival style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCN4Kp9xJcTSB5yiE1HfjAlxZG0t6e_tOyKeHzWBq8xMzM78WW-911T7mCD7bf_WvX_3kvYwaRHv4goli90EbvvhPN1VGTXYE6kY3cVnfP8dc5NQustDJ8CdKZ_m_kEccZ3LrZoNFlQb2cXBqx18WF941NYyYrWCjY00HHVBfe5oovmRfGO2_WpjKLpGve0q3KpDtuRiYseKgcZuOjWSc_qmJZ3WexQD1kpqKfG-wtrfzSNnSUGo_AIM0sM9a-EyZyiz4d8xoenNE0C"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-80"></div>
+<div class="absolute bottom-sm left-sm">
+<span class="font-title-md text-title-md text-white">KINETIC FLOW</span>
+<span class="block font-label-sm text-label-sm text-primary">FRIDAY MAIN</span>
+</div>
+</div>
+<div class="relative h-64 rounded-xl overflow-hidden group">
+<img alt="Artist 3" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="A wide-angle shot of a crowd at a professional music event, with countless mobile phone screens glowing in the dark, capturing the performance. The stage in the distance is a blur of intense red and white light. The atmosphere is one of collective excitement and modern exclusivity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWY_CyCYP4VyRNw5FvG9HB6_SK89t83G22B_dvuQM7TYv4R5uAYszhYotLBmUD7C8dkFDPVTp3zZKK5Pd3K31LuR4OVCLrk20dI3Sh7sp1OIdlrsJrkcheJF-aLVR_0QJwbeKOwebLRG3l5VozVEpn9YsGTvqP-hWpWPJBFdM1dEyMIOMg_Wyx_VgxhRtHb6UaUD_qIH2uF5yOaYAKae4NsakF1SW1Wu9JLNqs8gJh39h2zP6Bc2K9-z36qFZbf0qCXwULthd26rKe"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-80"></div>
+<div class="absolute bottom-sm left-sm">
+<span class="font-title-md text-title-md text-white">CYBER BEAT</span>
+<span class="block font-label-sm text-label-sm text-primary">SPECIAL GUEST</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Sidebar / Ticket Selection -->
+<div class="lg:col-span-4">
+<div class="sticky top-32 space-y-md">
+<div class="glass-card p-md rounded-xl border-primary-container/20 shadow-xl shadow-primary-container/5">
+<h3 class="font-headline-lg text-headline-lg mb-md text-white">Tickets</h3>
+<!-- Ticket Tiers -->
+<div class="space-y-sm" id="ticket-list">
+<!-- VIP Tier -->
+<div class="ticket-tier p-sm rounded-lg border border-outline-variant/50 bg-surface-container-high transition-all hover:border-primary cursor-pointer" data-price="450" data-tier="VIP Experience">
+<div class="flex justify-between items-start mb-xs">
+<div>
+<span class="font-title-md text-title-md text-white">VIP Experience</span>
+<p class="text-label-sm text-on-surface-variant font-medium">Front row access + Lounge</p>
+</div>
+<span class="font-headline-lg text-[24px] text-primary">$450</span>
+</div>
+<div class="flex justify-between items-center mt-base">
+<span class="text-emerald-400 font-label-sm text-label-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span> 12 left
+                                    </span>
+<div class="flex items-center gap-base bg-background rounded-full px-base py-1">
+<button class="w-8 h-8 rounded-full hover:bg-surface-variant flex items-center justify-center text-white" onclick="updateQty(this, -1)">−</button>
+<span class="qty font-bold text-white w-4 text-center">0</span>
+<button class="w-8 h-8 rounded-full hover:bg-surface-variant flex items-center justify-center text-white" onclick="updateQty(this, 1)">+</button>
+</div>
+</div>
+</div>
+<!-- Premium Tier -->
+<div class="ticket-tier p-sm rounded-lg border border-outline-variant/30 bg-surface-container-low transition-all hover:border-primary cursor-pointer" data-price="250" data-tier="Premium Access">
+<div class="flex justify-between items-start mb-xs">
+<div>
+<span class="font-title-md text-title-md text-white">Premium Access</span>
+<p class="text-label-sm text-on-surface-variant font-medium">Elevated viewing deck</p>
+</div>
+<span class="font-headline-lg text-[24px] text-white">$250</span>
+</div>
+<div class="flex justify-between items-center mt-base">
+<span class="text-on-surface-variant font-label-sm text-label-sm">Standard Availability</span>
+<div class="flex items-center gap-base bg-background rounded-full px-base py-1">
+<button class="w-8 h-8 rounded-full hover:bg-surface-variant flex items-center justify-center text-white" onclick="updateQty(this, -1)">−</button>
+<span class="qty font-bold text-white w-4 text-center">0</span>
+<button class="w-8 h-8 rounded-full hover:bg-surface-variant flex items-center justify-center text-white" onclick="updateQty(this, 1)">+</button>
+</div>
+</div>
+</div>
+<!-- General Tier -->
+<div class="ticket-tier p-sm rounded-lg border border-outline-variant/30 bg-surface-container-low transition-all hover:border-primary cursor-pointer" data-price="120" data-tier="General Admission">
+<div class="flex justify-between items-start mb-xs">
+<div>
+<span class="font-title-md text-title-md text-white">General Admission</span>
+<p class="text-label-sm text-on-surface-variant font-medium">Main arena floor access</p>
+</div>
+<span class="font-headline-lg text-[24px] text-white">$120</span>
+</div>
+<div class="flex justify-between items-center mt-base">
+<span class="text-on-surface-variant font-label-sm text-label-sm">Standard Availability</span>
+<div class="flex items-center gap-base bg-background rounded-full px-base py-1">
+<button class="w-8 h-8 rounded-full hover:bg-surface-variant flex items-center justify-center text-white" onclick="updateQty(this, -1)">−</button>
+<span class="qty font-bold text-white w-4 text-center">0</span>
+<button class="w-8 h-8 rounded-full hover:bg-surface-variant flex items-center justify-center text-white" onclick="updateQty(this, 1)">+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Checkout Summary -->
+<div class="mt-lg pt-md ticket-divider">
+<div class="flex justify-between items-center mb-xs">
+<span class="text-on-surface-variant font-body-md text-body-md">Subtotal</span>
+<span class="text-white font-title-md text-title-md" id="subtotal">₹0.00</span>
+</div>
+<div class="flex justify-between items-center mb-md">
+<span class="text-on-surface-variant font-body-md text-body-md">Processing Fees</span>
+<span class="text-white font-body-md text-body-md" id="fees">₹0.00</span>
+</div>
+<div class="flex justify-between items-center mb-md">
+<span class="text-white font-headline-lg text-headline-lg">Total</span>
+<span class="text-primary font-display-lg text-[32px]" id="total">₹0.00</span>
+</div>
+<div id="booking-status-warning" class="hidden p-sm mb-md rounded-lg text-center font-bold text-[12px] bg-error/10 text-error border border-error/20"></div>
+<button class="w-full bg-primary-container text-on-primary-container py-4 rounded-full font-bold crimson-glow active:scale-95 transition-all disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed" disabled="" id="checkout-btn">
+                                Proceed to Payment
+                            </button>
+<p class="text-center mt-sm text-on-surface-variant font-label-sm text-label-sm">Secure Checkout Powered by VANTAGE</p>
+</div>
+</div>
+<!-- Additional Sidebar Info -->
+<div class="bg-surface-container-low p-md rounded-xl border border-outline-variant/20">
+<div class="flex items-start gap-sm mb-md">
+<span class="material-symbols-outlined text-primary" data-icon="verified_user">verified_user</span>
+<div>
+<span class="block font-title-md text-title-md text-white">VANTAGE Promise</span>
+<p class="text-label-sm text-on-surface-variant">100% authentic tickets with instant digital delivery upon confirmation.</p>
+</div>
+</div>
+<div class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="help_outline">help_outline</span>
+<div>
+<span class="block font-title-md text-title-md text-white">Need Support?</span>
+<p class="text-label-sm text-on-surface-variant">24/7 dedicated concierge available for all ticket holders.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-lg bg-surface-container-lowest border-t border-outline-variant">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop space-y-md md:space-y-0 max-w-[1440px] mx-auto">
+<div class="flex flex-col gap-xs">
+<span class="font-headline-lg text-headline-lg text-on-surface">VANTAGE</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant">© 2024 VANTAGE TICKETING. ALL RIGHTS RESERVED.</p>
+</div>
+<div class="flex gap-lg">
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface transition-colors" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface transition-colors" href="#">Terms of Service</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface transition-colors" href="#">Cookies</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface transition-colors" href="#">Accessibility</a>
+</div>
+</div>
+</footer>
+
+</footer>
+
+<!-- Authentication Modal -->
+<div id="auth-modal" class="fixed inset-0 z-[100] flex items-center justify-center px-4 hidden">
+    <div class="absolute inset-0 bg-background/80 backdrop-blur-md" onclick="closeAuthModal()"></div>
+    <div class="glass-card w-full max-w-md p-lg rounded-2xl flex flex-col shadow-2xl relative border-primary-container/20">
+        <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-on-surface-variant hover:text-white flex items-center justify-center">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <h3 class="font-headline-lg text-headline-lg mb-xs text-white text-center">VANTAGE Account</h3>
+        <p class="text-on-surface-variant font-body-md mb-lg text-center text-sm">Please sign in to unlock exclusive experiences and tickets.</p>
+        
+        <div class="space-y-sm">
+            <!-- Google Login Button -->
+            <button onclick="loginWithGoogle()" class="w-full bg-white hover:bg-neutral-100 text-neutral-800 font-semibold py-3 px-4 rounded-full flex items-center justify-center gap-xs active:scale-[0.98] transition-all border border-neutral-300">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" width="20px" height="20px">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                <span class="font-body-md text-sm">Continue with Google</span>
+            </button>
+            
+            <div class="flex items-center my-md">
+                <div class="flex-grow h-px bg-outline-variant/30"></div>
+                <span class="px-3 text-xs text-on-surface-variant font-medium">OR</span>
+                <div class="flex-grow h-px bg-outline-variant/30"></div>
+            </div>
+
+            <!-- Simple Email Form -->
+            <form id="auth-email-form" onsubmit="loginWithEmail(event)" class="space-y-sm text-left">
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-[10px] text-on-surface-variant" for="auth-email">EMAIL ADDRESS</label>
+                    <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-2 font-body-md text-on-surface text-sm focus:outline-none focus:border-primary-container" id="auth-email" placeholder="you@example.com" required type="email"/>
+                </div>
+                <button type="submit" class="w-full crimson-gradient hover:scale-[1.02] text-white font-bold py-3 rounded-full crimson-glow transition-all uppercase tracking-wider text-label-sm mt-base">
+                    Sign In with Email
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Custom Google Login Input -->
+<div id="google-custom-modal" class="fixed inset-0 z-[120] flex items-center justify-center px-4 hidden">
+    <div class="absolute inset-0 bg-background/90 backdrop-blur-sm" onclick="closeGoogleCustomModal()"></div>
+    <div class="glass-card w-full max-w-sm p-lg rounded-2xl flex flex-col shadow-2xl relative border-primary-container/20">
+        <button onclick="closeGoogleCustomModal()" class="absolute top-4 right-4 text-on-surface-variant hover:text-white flex items-center justify-center">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <div class="flex flex-col items-center mb-md">
+            <h4 class="font-headline-lg text-title-md text-white font-bold">Google Sign In</h4>
+            <p class="text-xs text-on-surface-variant">Enter your Google email address</p>
+        </div>
+        
+        <form id="google-custom-form" onsubmit="submitGoogleCustom(event)" class="space-y-sm text-left">
+            <div class="flex flex-col gap-xs">
+                <label class="font-label-sm text-[10px] text-on-surface-variant" for="google-gmail">GMAIL ADDRESS</label>
+                <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-2 font-body-md text-on-surface text-sm focus:outline-none focus:border-primary-container" id="google-gmail" placeholder="name@gmail.com" required type="email" pattern="[a-zA-Z0-9._%+-]+@gmail\\.com$" title="Must be a valid @gmail.com address"/>
+            </div>
+            <div class="flex flex-col gap-xs">
+                <label class="font-label-sm text-[10px] text-on-surface-variant" for="google-name">FULL NAME</label>
+                <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-2 font-body-md text-on-surface text-sm focus:outline-none focus:border-primary-container" id="google-name" placeholder="John Doe" required type="text"/>
+            </div>
+            <button type="submit" class="w-full bg-white hover:bg-neutral-100 text-neutral-800 font-bold py-3 rounded-full transition-all text-label-sm mt-base">
+                Next
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Official Google Identity SDK Modal -->
+<div id="google-sdk-modal" class="fixed inset-0 z-[110] flex items-center justify-center px-4 hidden">
+    <div class="absolute inset-0 bg-background/90 backdrop-blur-sm" onclick="closeGoogleSdkModal()"></div>
+    <div class="glass-card w-full max-w-sm p-lg rounded-2xl flex flex-col shadow-2xl relative border-primary-container/20">
+        <button onclick="closeGoogleSdkModal()" class="absolute top-4 right-4 text-on-surface-variant hover:text-white flex items-center justify-center">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <div class="flex flex-col items-center mb-md">
+            <h4 class="font-headline-lg text-title-md text-white font-bold mb-xs">Google Authentication</h4>
+            <p class="text-xs text-on-surface-variant text-center leading-relaxed">Sign in securely using your Google account from this device.</p>
+        </div>
+        <!-- Google button placeholder -->
+        <div class="flex justify-center w-full py-base">
+            <div id="google-sdk-button"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Modal -->
+<div id="payment-modal" class="fixed inset-0 z-[100] flex items-center justify-center px-4 hidden">
+    <div class="absolute inset-0 bg-background/80 backdrop-blur-md"></div>
+    <div class="glass-card w-full max-w-md p-lg rounded-2xl flex flex-col shadow-2xl relative border-primary-container/20">
+        <button onclick="closePaymentModal()" class="absolute top-4 right-4 text-on-surface-variant hover:text-white flex items-center justify-center">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <h3 class="font-headline-lg text-headline-lg mb-sm text-white">Payment Details</h3>
+        <p class="text-on-surface-variant font-body-md mb-md">Secure processing powered by VANTAGE Vault</p>
+        
+        <form id="payment-form" onsubmit="processPayment(event)" class="space-y-sm">
+            <div class="flex flex-col gap-xs text-left">
+                <label class="font-label-sm text-label-sm text-on-surface-variant" for="cardholder-name">NAME ON CARD</label>
+                <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="cardholder-name" placeholder="John Doe" required type="text"/>
+            </div>
+            <div class="flex flex-col gap-xs text-left">
+                <label class="font-label-sm text-label-sm text-on-surface-variant" for="buyer-email">EMAIL ADDRESS</label>
+                <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="buyer-email" placeholder="john.doe@example.com" required type="email"/>
+            </div>
+            <div class="flex flex-col gap-xs text-left">
+                <label class="font-label-sm text-label-sm text-on-surface-variant" for="card-number">CARD NUMBER</label>
+                <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="card-number" placeholder="4111 2222 3333 4444" required type="text" pattern="[0-9 ]{16,19}" title="16-digit card number"/>
+            </div>
+            <div class="grid grid-cols-2 gap-sm text-left">
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant" for="card-expiry">EXPIRY DATE</label>
+                    <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="card-expiry" placeholder="MM/YY" required type="text" pattern="\d{2}/\d{2}" title="MM/YY format"/>
+                </div>
+                <div class="flex flex-col gap-xs">
+                    <label class="font-label-sm text-label-sm text-on-surface-variant" for="card-cvv">CVV</label>
+                    <input class="w-full bg-surface-container-highest border border-outline-variant rounded-lg px-md py-sm font-body-md text-on-surface focus:outline-none focus:border-primary-container" id="card-cvv" placeholder="123" required type="text" pattern="\d{3}" title="3-digit CVV"/>
+                </div>
+            </div>
+            
+            <div class="mt-md pt-sm border-t border-outline-variant/30 flex justify-between items-center text-white">
+                <span class="font-body-md text-on-surface-variant">Amount Due:</span>
+                <span class="font-headline-lg text-headline-lg text-primary" id="payment-amount">₹0.00</span>
+            </div>
+            
+            <button type="submit" class="w-full bg-primary-container text-on-primary-container py-4 rounded-full font-bold crimson-glow active:scale-95 transition-all flex justify-center items-center gap-sm mt-md" id="pay-now-btn">
+                <span>Pay Now</span>
+                <span id="payment-spinner" class="hidden animate-spin h-5 w-5 border-2 border-on-primary-container border-t-transparent rounded-full"></span>
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Success Modal / Ticket View -->
+<div id="success-modal" class="fixed inset-0 z-[100] flex items-center justify-center px-4 hidden">
+    <div class="absolute inset-0 bg-background/80 backdrop-blur-md"></div>
+    <div class="glass-card w-full max-w-sm p-lg rounded-2xl flex flex-col items-center text-center shadow-2xl relative border-primary-container/20">
+        <h3 class="font-headline-lg text-headline-lg text-emerald-400 mb-xs">Payment Successful!</h3>
+        <p class="font-body-md text-on-surface-variant mb-md">Your Vantage QR Ticket has been generated.</p>
+        
+        <!-- Ticket Card UI -->
+        <div id="ticket-visual" class="w-full perforated-edge bg-surface-container-high p-md rounded-2xl shadow-xl space-y-sm border border-white/5 relative text-left">
+            <div class="flex justify-between items-start">
+                <div class="font-display-lg text-[20px] tracking-tighter text-primary">VANTAGE</div>
+                <div class="text-right">
+                    <p class="text-[9px] text-on-surface-variant uppercase">Ticket No.</p>
+                    <p class="font-headline-lg text-sm" id="success-ticket-id">#VT-XXXXX</p>
+                </div>
+            </div>
+            <div class="pt-sm border-t border-dashed border-outline-variant/50">
+                <p class="text-[9px] text-on-surface-variant uppercase mb-xs">Event</p>
+                <h3 class="font-headline-lg text-lg text-white" id="success-event-title">EVENT TITLE</h3>
+            </div>
+            <div class="grid grid-cols-2 gap-sm">
+                <div>
+                    <p class="text-[9px] text-on-surface-variant uppercase">Holder</p>
+                    <p class="font-title-md text-sm text-white" id="success-holder">John Doe</p>
+                </div>
+                <div>
+                    <p class="text-[9px] text-on-surface-variant uppercase">Tier</p>
+                    <p class="font-title-md text-sm text-white" id="success-tier">VIP Experience</p>
+                </div>
+            </div>
+            <div class="bg-white p-2 rounded-lg w-fit mx-auto mt-sm">
+                <img id="success-qr-code" class="w-28 h-28" src="" alt="QR Code"/>
+            </div>
+        </div>
+
+        <!-- PDF Download Button -->
+        <button onclick="downloadTicketPDF()" class="w-full py-3 mb-sm rounded-full bg-primary text-on-primary font-bold text-label-sm active:scale-95 transition-all uppercase tracking-wider flex items-center justify-center gap-xs">
+            <span class="material-symbols-outlined text-[18px]">download</span> Download PDF Ticket
+        </button>
+
+        <div class="flex gap-sm w-full mt-base">
+            <a href="/admin" class="flex-1 py-3 rounded-full bg-surface-container-high text-white text-center font-bold text-label-sm border border-outline-variant hover:bg-white/5 active:scale-95 transition-all uppercase tracking-wider flex items-center justify-center">
+                Admin Panel
+            </a>
+            <button onclick="closeSuccessModal()" class="flex-1 py-3 rounded-full bg-primary-container text-on-primary-container font-bold text-label-sm crimson-glow active:scale-95 transition-all uppercase tracking-wider">
+                Done
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('event') || 'neon-velocity';
+
+        async function loadEventDetails() {
+            const currentEvent = await VantageDB.getEvent(eventId);
+            const warningEl = document.getElementById('booking-status-warning');
+            const ticketListContainer = document.getElementById('ticket-list');
+            const checkoutBtn = document.getElementById('checkout-btn');
+
+            if (!currentEvent) {
+                if (warningEl) {
+                    warningEl.innerText = "This event is not publicly available or does not exist.";
+                    warningEl.classList.remove('hidden');
+                }
+                if (ticketListContainer) {
+                    ticketListContainer.innerHTML = `<div class="text-center py-base text-on-surface-variant font-body-md">Event unavailable</div>`;
+                }
+                if (checkoutBtn) {
+                    checkoutBtn.disabled = true;
+                    checkoutBtn.classList.remove('hover:scale-105');
+                }
+                return;
+            }
+
+            // Populate Event Details Header
+            document.querySelector('h1.font-display-lg').innerText = currentEvent.title;
+            document.querySelector('span.bg-primary-container\\/20').innerText = currentEvent.category;
+            document.querySelector('.flex-wrap .flex:nth-child(1) span.font-body-md').innerText = currentEvent.date;
+            document.querySelector('.flex-wrap .flex:nth-child(2) span.font-body-md').innerText = currentEvent.location;
+            document.querySelector('img[alt="Event Main Header"]').src = currentEvent.image;
+
+            // Populate Left description & stats
+            document.querySelector('section.glass-card p').innerText = currentEvent.description || `Experience the zenith of electronic soundscapes and high-tech experiences at ${currentEvent.title}.`;
+
+            const capVal = typeof currentEvent.capacity === 'number' ? currentEvent.capacity : parseInt(String(currentEvent.capacity).replace(/,/g, ''));
+            document.querySelector('section.glass-card .grid div:nth-child(1) span:last-child').innerText = isNaN(capVal) ? currentEvent.capacity : capVal.toLocaleString();
+            document.querySelector('section.glass-card .grid div:nth-child(2) span:last-child').innerText = currentEvent.doors;
+            document.querySelector('section.glass-card .grid div:nth-child(3) span:last-child').innerText = currentEvent.ageLimit;
+            document.querySelector('section.glass-card .grid div:nth-child(4) span:last-child').innerText = currentEvent.status;
+
+            // Populate Lineup dynamically
+            const lineupSection = document.getElementById('lineup-section');
+            const lineupTitle = document.getElementById('lineup-title');
+            const lineupContainer = document.getElementById('lineup-container');
+
+            if (currentEvent.lineup && currentEvent.lineup.length > 0) {
+                if (lineupSection) lineupSection.classList.remove('hidden');
+                if (lineupTitle) lineupTitle.innerText = currentEvent.lineupTitle || 'Featured Lineup';
+                if (lineupContainer) {
+                    lineupContainer.innerHTML = '';
+                    currentEvent.lineup.forEach(item => {
+                        lineupContainer.innerHTML += `
+                            <div class="relative h-64 rounded-xl overflow-hidden group">
+                                <img alt="${item.name}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" src="${item.image}"/>
+                                <div class="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-80"></div>
+                                <div class="absolute bottom-sm left-sm">
+                                    <span class="font-title-md text-title-md text-white">${item.name}</span>
+                                    <span class="block font-label-sm text-label-sm text-primary">${item.role}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            } else {
+                if (lineupSection) lineupSection.classList.add('hidden');
+            }
+
+            // Render ticket tiers
+            // Keep track of quantities if user already selected some before dynamic refresh
+            const selectedQtys = {};
+            document.querySelectorAll('.ticket-tier').forEach(tierEl => {
+                const name = tierEl.getAttribute('data-tier');
+                const qty = parseInt(tierEl.querySelector('.qty').innerText);
+                selectedQtys[name] = qty;
+            });
+
+            ticketListContainer.innerHTML = ''; // Clear existing static tiers
+
+            // Check status & booking windows
+            const now = new Date();
+            let bookingAllowed = true;
+            let warningMessage = "";
+
+            if (currentEvent.status === 'paused') {
+                bookingAllowed = false;
+                warningMessage = "Bookings are temporarily unavailable for this event.";
+            } else if (currentEvent.status === 'sold_out') {
+                bookingAllowed = false;
+                warningMessage = "This event is sold out.";
+            } else if (currentEvent.status === 'cancelled') {
+                bookingAllowed = false;
+                warningMessage = "This event has been cancelled.";
+            } else if (currentEvent.status === 'draft') {
+                warningMessage = "ADMIN PREVIEW: This event is a draft and is not visible publicly.";
+            }
+
+            // Check booking windows if still allowed
+            if (bookingAllowed) {
+                if (currentEvent.booking_start) {
+                    const startDate = new Date(currentEvent.booking_start);
+                    if (now < startDate) {
+                        bookingAllowed = false;
+                        warningMessage = `Bookings have not started yet. Bookings will open on ${startDate.toLocaleString()}.`;
+                    }
+                }
+                if (bookingAllowed && currentEvent.booking_end) {
+                    const endDate = new Date(currentEvent.booking_end);
+                    if (now > endDate) {
+                        bookingAllowed = false;
+                        warningMessage = "Bookings for this event have closed.";
+                    }
+                }
+            }
+
+            if (!bookingAllowed) {
+                if (warningEl) {
+                    warningEl.innerText = warningMessage;
+                    warningEl.classList.remove('hidden');
+                    warningEl.className = "p-sm mb-md rounded-lg text-center font-bold text-[12px] bg-error/10 text-error border border-error/20";
+                }
+                if (checkoutBtn) {
+                    checkoutBtn.disabled = true;
+                    checkoutBtn.classList.remove('hover:scale-105');
+                }
+            } else {
+                if (warningEl) {
+                    if (warningMessage) {
+                        warningEl.innerText = warningMessage;
+                        warningEl.classList.remove('hidden');
+                        warningEl.className = "p-sm mb-md rounded-lg text-center font-bold text-[12px] bg-primary-container/10 text-primary border border-primary/20";
+                    } else {
+                        warningEl.classList.add('hidden');
+                    }
+                }
+            }
+
+            currentEvent.tiers.forEach(tier => {
+                const isSoldOut = tier.qtyLeft === 0;
+                const soldOutClass = isSoldOut ? 'opacity-50 cursor-not-allowed pointer-events-none' : '';
+                
+                const availability = isSoldOut ? 
+                    `<span class="text-error font-label-sm text-label-sm flex items-center gap-xs font-bold"><span class="material-symbols-outlined text-[14px]">cancel</span> SOLD OUT</span>` :
+                    `<span class="text-emerald-400 font-label-sm text-label-sm flex items-center gap-xs font-bold"><span class="material-symbols-outlined text-[14px]">check_circle</span> ${tier.qtyLeft} left</span>`;
+                
+                let currentQty = selectedQtys[tier.name] || 0;
+                if (currentQty > tier.qtyLeft) {
+                    currentQty = tier.qtyLeft; // Clamp selected qty to available limit
+                }
+                const activeClasses = currentQty > 0 ? 'border-primary bg-primary-container/5' : '';
+                
+                const tierEl = document.createElement('div');
+                tierEl.className = `ticket-tier p-sm rounded-lg border border-outline-variant/30 bg-surface-container-low transition-all hover:border-primary cursor-pointer ${activeClasses} ${soldOutClass}`;
+                tierEl.setAttribute('data-price', tier.price);
+                tierEl.setAttribute('data-tier', tier.name);
+                tierEl.setAttribute('data-max', tier.qtyLeft);
+                tierEl.innerHTML = `
+                    <div class="flex justify-between items-start mb-xs">
+                        <div>
+                            <span class="font-title-md text-title-md text-white">${tier.name}</span>
+                            <p class="text-label-sm text-on-surface-variant font-medium">${tier.desc}</p>
+                        </div>
+                        <span class="font-headline-lg text-[24px] text-white">₹${tier.price.toLocaleString()}</span>
+                    </div>
+                    <div class="flex justify-between items-center mt-base">
+                        ${availability}
+                        <div class="flex items-center gap-base bg-background rounded-full px-base py-1">
+                            <button class="w-8 h-8 rounded-full hover:bg-surface-variant flex items-center justify-center text-white" onclick="updateQty(this, -1)" ${!bookingAllowed ? 'disabled' : ''}>−</button>
+                            <span class="qty font-bold text-white w-4 text-center">${currentQty}</span>
+                            <button class="w-8 h-8 rounded-full hover:bg-surface-variant flex items-center justify-center text-white" onclick="updateQty(this, 1)" ${!bookingAllowed ? 'disabled' : ''}>+</button>
+                        </div>
+                    </div>
+                `;
+                ticketListContainer.appendChild(tierEl);
+            });
+            calculateTotal();
+        }
+
+        let totalAmount = 0;
+        
+        function updateQty(btn, delta) {
+            event.stopPropagation(); // Prevent card clicks if any
+            const tierEl = btn.closest('.ticket-tier');
+            const maxQty = parseInt(tierEl.getAttribute('data-max')) || 0;
+            const qtySpan = btn.parentElement.querySelector('.qty');
+            let currentQty = parseInt(qtySpan.innerText);
+            
+            let newQty = currentQty + delta;
+            if (newQty < 0) newQty = 0;
+            if (newQty > maxQty) {
+                newQty = maxQty;
+                if (maxQty === 0) {
+                    alert("This ticket tier is sold out!");
+                } else {
+                    alert(`Only ${maxQty} tickets left for this tier!`);
+                }
+            }
+            qtySpan.innerText = newQty;
+            
+            // Visual feedback on row selection
+            if (newQty > 0) {
+                tierEl.classList.add('border-primary', 'bg-primary-container/5');
+            } else {
+                tierEl.classList.remove('border-primary', 'bg-primary-container/5');
+            }
+            
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            let subtotal = 0;
+            const tiers = document.querySelectorAll('.ticket-tier');
+            
+            tiers.forEach(tier => {
+                const price = parseFloat(tier.getAttribute('data-price'));
+                const qty = parseInt(tier.querySelector('.qty').innerText);
+                subtotal += price * qty;
+            });
+            
+            const fees = subtotal > 0 ? subtotal * 0.08 : 0;
+            const total = subtotal + fees;
+            totalAmount = total;
+            
+            document.getElementById('subtotal').innerText = `₹${subtotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('fees').innerText = `₹${fees.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('total').innerText = `₹${total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            
+            const checkoutBtn = document.getElementById('checkout-btn');
+            const warningEl = document.getElementById('booking-status-warning');
+            
+            // Check if bookings are allowed in general before enabling checkout button
+            const isWarningActive = warningEl && !warningEl.classList.contains('hidden') && !warningEl.innerText.includes('ADMIN PREVIEW');
+
+            if (total > 0 && !isWarningActive) {
+                checkoutBtn.disabled = false;
+                checkoutBtn.classList.add('hover:scale-105');
+            } else {
+                checkoutBtn.disabled = true;
+                checkoutBtn.classList.remove('hover:scale-105');
+            }
+        }
+
+        // Checkout Button Listener
+        const checkoutBtn = document.getElementById('checkout-btn');
+        checkoutBtn.addEventListener('click', () => {
+            const user = VantageDB.getCurrentUser();
+            if (!user) {
+                alert("You must sign in before booking a ticket!");
+                openAuthModal();
+                return;
+            }
+            // Autofill cardholder name and buyer email
+            document.getElementById('cardholder-name').value = user.name;
+            document.getElementById('buyer-email').value = user.email;
+
+            document.getElementById('payment-amount').innerText = `₹${totalAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('payment-modal').classList.remove('hidden');
+        });
+
+        function closePaymentModal() {
+            document.getElementById('payment-modal').classList.add('hidden');
+        }
+
+        function processPayment(e) {
+            e.preventDefault();
+            const payNowBtn = document.getElementById('pay-now-btn');
+            const spinner = document.getElementById('payment-spinner');
+            
+            payNowBtn.disabled = true;
+            spinner.classList.remove('hidden');
+            
+            // Find selected tier
+            let selectedTier = null;
+            document.querySelectorAll('.ticket-tier').forEach(tierEl => {
+                const qty = parseInt(tierEl.querySelector('.qty').innerText);
+                if (qty > 0) {
+                    selectedTier = {
+                        name: tierEl.getAttribute('data-tier'),
+                        price: parseFloat(tierEl.getAttribute('data-price')),
+                        qty: qty
+                    };
+                }
+            });
+
+            const attendeeName = document.getElementById('cardholder-name').value;
+            const attendeeEmail = document.getElementById('buyer-email').value;
+
+            setTimeout(async () => {
+                try {
+                    const currentEvent = await VantageDB.getEvent(eventId);
+                    if (!currentEvent) {
+                        alert("Event no longer available.");
+                        payNowBtn.disabled = false;
+                        spinner.classList.add('hidden');
+                        return;
+                    }
+
+                    const randId = Math.floor(Math.random() * 90000) + 10000;
+                    const ticketId = `VT-${randId}`;
+
+                    const subtotal = selectedTier.price * selectedTier.qty;
+                    const fees = subtotal * 0.08;
+                    const totalPaid = subtotal + fees;
+
+                    const ticket = {
+                        id: ticketId,
+                        attendeeName: attendeeName,
+                        attendeeEmail: attendeeEmail,
+                        eventName: currentEvent.title,
+                        eventId: eventId,
+                        tierName: selectedTier.name,
+                        price: selectedTier.price,
+                        quantity: selectedTier.qty,
+                        totalPaid: totalPaid,
+                        purchaseDate: new Date().toISOString(),
+                        status: "valid"
+                    };
+
+                    // Save to VantageDB
+                    await VantageDB.saveTicket(ticket);
+
+                    // Setup success screen
+                    document.getElementById('success-ticket-id').innerText = `#${ticketId}`;
+                    document.getElementById('success-event-title').innerText = ticket.eventName.toUpperCase();
+                    document.getElementById('success-holder').innerText = ticket.attendeeName;
+                    document.getElementById('success-tier').innerText = `${ticket.quantity}x ${ticket.tierName}`;
+                    
+                    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${ticketId}`;
+                    document.getElementById('success-qr-code').src = qrUrl;
+
+                    document.getElementById('payment-modal').classList.add('hidden');
+                    document.getElementById('success-modal').classList.remove('hidden');
+
+                    // Reset state
+                    document.getElementById('payment-form').reset();
+                    document.querySelectorAll('.qty').forEach(q => q.innerText = '0');
+                    document.querySelectorAll('.ticket-tier').forEach(t => t.classList.remove('border-primary', 'bg-primary-container/5'));
+                    calculateTotal();
+                } catch (err) {
+                    console.error("Booking error:", err);
+                    alert("Booking failed. Please ensure the booking window is open and try again.");
+                } finally {
+                    payNowBtn.disabled = false;
+                    spinner.classList.add('hidden');
+                }
+            }, 1500);
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('success-modal').classList.add('hidden');
+        }
+
+        window.downloadTicketPDF = function() {
+            const element = document.getElementById('ticket-visual');
+            if (!element) return;
+            
+            const ticketIdText = document.getElementById('success-ticket-id').innerText;
+            const opt = {
+                margin:       0.2,
+                filename:     `Vantage_Ticket_${ticketIdText.replace('#', '')}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#1d2224' },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save().catch(err => {
+                console.error("PDF generation failed:", err);
+            });
+        };
+
+        // Setup real-time listener
+        function setupRealtime() {
+            const client = VantageDB.getSupabaseClient();
+            client
+                .channel('schema-db-changes')
+                .on(
+                    'postgres_changes',
+                    { event: '*', schema: 'public', table: 'events', filter: `id=eq.${eventId}` },
+                    async payload => {
+                        console.log('Current event updated in realtime:', payload);
+                        await loadEventDetails();
+                    }
+                )
+                .subscribe();
+        }
+
+        // Listen for storage changes to refresh details in real-time
+        window.addEventListener('storage', async () => {
+            await loadEventDetails();
+        });
+
+        // Initial render
+        (async () => {
+            await loadEventDetails();
+            setupRealtime();
+        })();
+
+        // Customer Authentication Functions
+        window.openAuthModal = function() {
+            document.getElementById('auth-modal').classList.remove('hidden');
+        };
+
+        window.closeAuthModal = function() {
+            document.getElementById('auth-modal').classList.add('hidden');
+        };
+
+        window.loginWithGoogle = function() {
+            const clientId = localStorage.getItem('vantage_google_client_id');
+            if (clientId && clientId.trim() !== "") {
+                document.getElementById('auth-modal').classList.add('hidden');
+                document.getElementById('google-sdk-modal').classList.remove('hidden');
+                initializeGoogleSignInSDK();
+            } else {
+                document.getElementById('auth-modal').classList.add('hidden');
+                document.getElementById('google-custom-modal').classList.remove('hidden');
+            }
+        };
+
+        window.closeGoogleSdkModal = function() {
+            document.getElementById('google-sdk-modal').classList.add('hidden');
+        };
+
+        function decodeJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                console.error("JWT decoding failed:", e);
+                return null;
+            }
+        }
+
+        window.handleCredentialResponse = function(response) {
+            const payload = decodeJwt(response.credential);
+            if (payload) {
+                const user = {
+                    name: payload.name,
+                    email: payload.email,
+                    avatar: payload.picture
+                };
+                VantageDB.loginUser(user);
+                closeGoogleSdkModal();
+                alert(`Welcome, ${user.name}! Authenticated via Google.`);
+            }
+        };
+
+        function initializeGoogleSignInSDK() {
+            const clientId = localStorage.getItem('vantage_google_client_id');
+            if (window.google && window.google.accounts) {
+                google.accounts.id.initialize({
+                    client_id: clientId,
+                    callback: handleCredentialResponse
+                });
+                
+                google.accounts.id.renderButton(
+                    document.getElementById("google-sdk-button"),
+                    { 
+                        theme: "filled_blue", 
+                        size: "large", 
+                        shape: "pill",
+                        width: "280"
+                    }
+                );
+            }
+        }
+
+        window.closeGoogleSelectModal = function() {
+            document.getElementById('google-select-modal').classList.add('hidden');
+        };
+
+        window.selectGoogleAccount = function(name, email, avatar) {
+            const user = { name, email, avatar };
+            VantageDB.loginUser(user);
+            closeGoogleSelectModal();
+            alert(`Welcome, ${name}! Logged in via Google.`);
+        };
+
+        window.showGoogleCustomLogin = function() {
+            document.getElementById('google-select-modal').classList.add('hidden');
+            document.getElementById('google-custom-modal').classList.remove('hidden');
+        };
+
+        window.closeGoogleCustomModal = function() {
+            document.getElementById('google-custom-modal').classList.add('hidden');
+        };
+
+        window.submitGoogleCustom = function(e) {
+            e.preventDefault();
+            const email = document.getElementById('google-gmail').value;
+            const name = document.getElementById('google-name').value;
+            const avatar = `https://www.gravatar.com/avatar/${btoa(email)}?d=identicon`;
+            
+            const user = { name, email, avatar };
+            VantageDB.loginUser(user);
+            
+            document.getElementById('google-custom-modal').classList.add('hidden');
+            alert(`Welcome, ${name}! Logged in via Google.`);
+        };
+
+        window.loginWithEmail = function(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const name = email.split('@')[0];
+            const avatar = `https://www.gravatar.com/avatar/${btoa(email)}?d=identicon`;
+            
+            const user = { name, email, avatar };
+            VantageDB.loginUser(user);
+            
+            closeAuthModal();
+            alert(`Signed in as ${email}.`);
+        };
+
+        window.logoutCustomer = function() {
+            if (confirm("Are you sure you want to logout?")) {
+                VantageDB.logoutUser();
+                alert("Logged out successfully.");
+            }
+        };
+
+        function updateAuthUI() {
+            const user = VantageDB.getCurrentUser();
+            const authBtnContainer = document.getElementById('auth-btn-container');
+            if (!authBtnContainer) return;
+            
+            if (user) {
+                authBtnContainer.innerHTML = `
+                    <div class="flex items-center gap-sm">
+                        <div class="flex items-center gap-xs bg-surface-container-high px-4 py-2 rounded-full border border-outline-variant/30">
+                            <img src="${user.avatar || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'}" class="w-6 h-6 rounded-full border border-primary-container/50" alt="${user.name}" />
+                            <span class="font-body-md text-xs font-semibold text-white max-w-[100px] truncate hidden sm:inline">${user.name.split(' ')[0]}</span>
+                        </div>
+                        <button onclick="logoutCustomer()" class="text-on-surface-variant hover:text-primary font-label-sm text-[11px] uppercase tracking-wider transition-colors ml-2">Logout</button>
+                    </div>
+                `;
+            } else {
+                authBtnContainer.innerHTML = `
+                    <button onclick="openAuthModal()" class="bg-primary-container text-on-primary-container px-6 py-2 rounded-full font-bold active:scale-95 transition-transform">Sign In</button>
+                `;
+            }
+        }
+
+        window.addEventListener('storage', () => {
+            updateAuthUI();
+        });
+
+        // Initialize UI
+        updateAuthUI();
+
+        // Payment Form Auto-Formatters
+        (function() {
+            const cardNum = document.getElementById('card-number');
+            const cardExpiry = document.getElementById('card-expiry');
+            const cardCvv = document.getElementById('card-cvv');
+
+            if (cardNum) {
+                cardNum.addEventListener('input', (e) => {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 16) value = value.slice(0, 16);
+                    let formatted = '';
+                    for (let i = 0; i < value.length; i++) {
+                        if (i > 0 && i % 4 === 0) {
+                            formatted += ' ';
+                        }
+                        formatted += value[i];
+                    }
+                    e.target.value = formatted;
+                });
+            }
+
+            if (cardExpiry) {
+                cardExpiry.addEventListener('input', (e) => {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 4) value = value.slice(0, 4);
+                    if (value.length > 2) {
+                        e.target.value = value.slice(0, 2) + '/' + value.slice(2);
+                    } else {
+                        e.target.value = value;
+                    }
+                });
+            }
+
+            if (cardCvv) {
+                cardCvv.addEventListener('input', (e) => {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 3) value = value.slice(0, 3);
+                    e.target.value = value;
+                });
+            }
+        })();
+    </script>
+</body></html>
